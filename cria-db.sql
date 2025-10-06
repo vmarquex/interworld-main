@@ -1,0 +1,129 @@
+USE master
+IF EXISTS(select * from sys.databases where name='bd_intercambio')
+DROP DATABASE bd_intercambio
+GO
+-- CRIAR UM BANCO DE DADOS
+CREATE DATABASE bd_intercambio
+GO
+-- ACESSAR O BANCO DE DADOS
+USE bd_intercambio
+GO
+ 
+CREATE TABLE Usuario
+(
+   id            INT            IDENTITY,
+   nome          VARCHAR(100)   NOT NULL,
+   email         VARCHAR(100)   UNIQUE NOT NULL,
+   senha         VARCHAR(100)   NOT NULL,
+   nivelAcesso   VARCHAR(50)    NULL, -- ADMIN ou INTERCAMBISTA ou ESCOLA ou SENHORIO
+   foto          VARBINARY(MAX) NULL,
+   dataCadastro  SMALLDATETIME  NOT NULL,
+   statusUsuario VARCHAR(20)    NOT NULL, -- ATIVO ou INATIVO ou TROCAR_SENHA
+ 
+   PRIMARY KEY (id)
+);
+INSERT Usuario (nome, email, senha, nivelAcesso, foto, dataCadastro, statusUsuario)
+VALUES ('Fulano da Silva', 'fulano@email.com.br', 'MTIzNDU2Nzg=', 'ADMIN', NULL, GETDATE(), 'ATIVO')
+INSERT Usuario (nome, email, senha, nivelAcesso, foto, dataCadastro, statusUsuario)
+VALUES ('Beltrana de Sá', 'beltrana@email.com.br', 'MTIzNDU2Nzg=', 'USER', NULL, GETDATE(), 'ATIVO')
+INSERT Usuario (nome, email, senha, nivelAcesso, foto, dataCadastro, statusUsuario)
+VALUES ('Sicrana de Oliveira', 'sicrana@email.com.br', 'MTIzNDU2Nzg=', 'USER', NULL, GETDATE(), 'INATIVO')
+INSERT Usuario (nome, email, senha, nivelAcesso, foto, dataCadastro, statusUsuario)
+VALUES ('Ordnael Zurc', 'ordnael@email.com.br', 'MTIzNDU2Nzg=', 'USER', NULL, GETDATE(), 'TROCAR_SENHA')
+GO
+ 
+CREATE TABLE Escola
+(
+    id           INT            IDENTITY,
+    nome         VARCHAR(100)   NOT NULL,
+    descricao    VARCHAR(400)   NOT NULL,
+    pais         VARCHAR(50)    NOT NULL,
+    regiao       VARCHAR(50)    NOT NULL,
+    telefone     VARCHAR(20)    NOT NULL,
+    website      VARCHAR(100)   NOT NULL,
+    foto         VARBINARY(max)     NULL,
+    avalicao     DECIMAL(3,1)       NULL,
+    usuario_id   INT            NOT NULL,
+    statusEscola VARCHAR(10)    NOT NULL, -- ATIVO ou INATIVO
+ 
+    PRIMARY KEY (id),
+    FOREIGN KEY (usuario_id) REFERENCES Usuario (id)
+);
+ 
+CREATE TABLE Idioma
+(
+    id        INT          IDENTITY,
+    nome      VARCHAR(50)  NOT NULL,
+    descricao VARCHAR(100) NOT NULL,
+ 
+    PRIMARY KEY(id)
+);
+ 
+CREATE TABLE EscolaIdioma
+(
+    id                  INT             IDENTITY,
+    descricao           VARCHAR(400)    NOT NULL,
+    escola_id           INT             NOT NULL,
+    idioma_id           INT             NOT NULL,
+    statusEscolaIdioma  VARCHAR(10)     NOT NULL, -- ATIVO ou INATIVO
+ 
+    PRIMARY KEY (id),
+    FOREIGN KEY (escola_id) REFERENCES Escola (id),
+    FOREIGN KEY (idioma_id) REFERENCES Idioma (id)
+);
+ 
+CREATE TABLE Senhorio
+(
+    id              INT             IDENTITY,
+    nome            VARCHAR(100)    NOT NULL,
+    descricao       VARCHAR(400)    NOT NULL,
+    pais            VARCHAR(50)     NOT NULL,
+    localSenhorio   VARCHAR(100)    NOT NULL,
+    telefone        VARCHAR(20)     NOT NULL,
+    foto            VARBINARY(max)      NULL,
+    usuario_id      INT             NOT NULL,
+    statusSenhorio  VARCHAR(10)     NOT NULL, -- ATIVO ou INATIVO
+ 
+    PRIMARY KEY (id),
+    FOREIGN KEY (usuario_id) REFERENCES Usuario (id)
+);
+ 
+CREATE TABLE Estudante
+(
+    id              INT             IDENTITY,
+    usuario_id      INT             NOT NULL,
+    dataNascimento  VARCHAR(10)         NULL,
+    cpf             VARCHAR(14)         NULL,
+    rg              VARCHAR(12)         NULL,
+    telefone        VARCHAR(20)         NULL,
+    endereco        VARCHAR(200)        NULL,
+    cidade          VARCHAR(100)        NULL,
+    estado          VARCHAR(2)          NULL,
+    cep             VARCHAR(9)          NULL,
+    statusEstudante VARCHAR(10)     NOT NULL, -- ATIVO ou INATIVO
+ 
+    PRIMARY KEY (id),
+    FOREIGN KEY (usuario_id) REFERENCES Usuario (id)
+);
+
+CREATE TABLE Mensagem
+(
+    id              INT             IDENTITY,
+    dataMensagem    SMALLDATETIME   NOT NULL,
+    usuario_id      INT             NOT NULL,
+    tipo            VARCHAR(20)     NOT NULL, -- Feedback, Comentário, Contato ou Avaliação
+    texto           VARCHAR(400)    NOT NULL,
+    nota            DECIMAL(3,1)        NULL,
+    escola_id       INT                 NULL,
+    dataResposta    SMALLDATETIME       NULL,
+    resposta        VARCHAR(400)        NULL,
+    statusMensagem  VARCHAR(10)     NOT NULL, -- ATIVO ou RESPONDIDA ou INATIVO
+ 
+    PRIMARY KEY (id),
+    FOREIGN KEY (usuario_id) REFERENCES Usuario (id),
+    FOREIGN KEY (escola_id) REFERENCES Escola (id)
+);
+ 
+SELECT * FROM Usuario
+SELECT * FROM Mensagem
+SELECT * FROM Escola
