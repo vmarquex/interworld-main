@@ -21,6 +21,35 @@ const LoginForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const isMockUser = (email === 'teste@gmail.com' || email === 'escola@gmail.com' || email === 'senhorio@gmail.com') && password === '12345678';
+
+    if (isMockUser) {
+      let mockName = 'Usuário Teste';
+      if (email === 'escola@gmail.com') mockName = 'Escola Teste';
+      if (email === 'senhorio@gmail.com') mockName = 'Senhorio Teste';
+
+      const isProfileComplete = userType === 'student'; // Students don't need to fill a profile card initially
+
+      localStorage.setItem('userData', JSON.stringify({
+        id: `mock-id-${userType}`,
+        email: email,
+        userType: userType,
+        name: mockName,
+        loginTime: new Date().toISOString(),
+        profileComplete: isProfileComplete
+      }));
+      localStorage.setItem('isLoggedIn', 'true');
+
+      toast({
+        title: "Login de teste realizado com sucesso!",
+        description: "Bem-vindo ao modo de teste.",
+      });
+
+      navigate('/dashboard');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -143,30 +172,34 @@ const LoginForm = () => {
                 <User className="h-4 w-4" />
                 <span className="text-sm font-medium">Estudante</span>
               </button>
-              <button
-                type="button"
-                onClick={() => setUserType('school')}
-                className={`flex-1 flex items-center justify-center space-x-2 py-2 px-4 rounded-md transition-all ${
-                  userType === 'school'
-                    ? 'bg-white shadow-sm text-teal-600'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                <Building className="h-4 w-4" />
-                <span className="text-sm font-medium">Escola</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setUserType('senhorio')}
-                className={`flex-1 flex items-center justify-center space-x-2 py-2 px-4 rounded-md transition-all ${
-                  userType === 'senhorio'
-                    ? 'bg-white shadow-sm text-green-600'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                <Home className="h-4 w-4" />
-                <span className="text-sm font-medium">Senhorio</span>
-              </button>
+              {!isMobile && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setUserType('school')}
+                    className={`flex-1 flex items-center justify-center space-x-2 py-2 px-4 rounded-md transition-all ${
+                      userType === 'school'
+                        ? 'bg-white shadow-sm text-teal-600'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    <Building className="h-4 w-4" />
+                    <span className="text-sm font-medium">Escola</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setUserType('senhorio')}
+                    className={`flex-1 flex items-center justify-center space-x-2 py-2 px-4 rounded-md transition-all ${
+                      userType === 'senhorio'
+                        ? 'bg-white shadow-sm text-green-600'
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    <Home className="h-4 w-4" />
+                    <span className="text-sm font-medium">Senhorio</span>
+                  </button>
+                </>
+              )}
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -248,11 +281,18 @@ const LoginForm = () => {
               </Button>
             </form>
 
-            {/* Register Link - Only for Desktop */}
-            {!isMobile && (
-              <div className="text-center pt-4 border-t border-gray-200">
+            {/* Register Link */}
+            <div className="text-center pt-4 border-t border-gray-200">
+              {isMobile ? (
+                  <p className="text-sm text-gray-600">
+                    Ainda não tem conta?
+                    <Link to="/cadastro-estudante" className="ml-1 text-blue-600 hover:text-blue-700 hover:underline font-medium">
+                      Cadastre-se
+                    </Link>
+                  </p>
+              ) : (
                 <p className="text-sm text-gray-600">
-                  {userType === 'student' ? 'Ainda não tem conta?' : userType === 'school' ? 'Primeira vez aqui?' : 'Primeira vez aqui?'}
+                  {userType === 'student' ? 'Ainda não tem conta?' : 'Primeira vez aqui?'}
                   <Link to={
                     userType === 'student' ? '/cadastro-estudante' : 
                     userType === 'school' ? '/cadastro-escola' : 
@@ -261,17 +301,8 @@ const LoginForm = () => {
                     {userType === 'student' ? 'Cadastre-se' : userType === 'school' ? 'Registre sua instituição' : 'Registre sua propriedade'}
                   </Link>
                 </p>
-              </div>
-            )}
-
-            {/* Mobile Note */}
-            {isMobile && (
-              <div className="text-center pt-4 border-t border-gray-200">
-                <p className="text-xs text-gray-500">
-                  Para cadastrar-se, acesse pelo computador
-                </p>
-              </div>
-            )}
+              )}
+            </div>
           </CardContent>
         </Card>
 

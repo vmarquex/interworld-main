@@ -15,7 +15,7 @@ CREATE TABLE Usuario
    nome          VARCHAR(100)   NOT NULL,
    email         VARCHAR(100)   UNIQUE NOT NULL,
    senha         VARCHAR(100)   NOT NULL,
-   nivelAcesso   VARCHAR(50)    NULL, -- ADMIN ou INTERCAMBISTA ou ESCOLA ou SENHORIO
+   nivelAcesso   VARCHAR(10)    NULL, -- ADMIN ou INTERCAMBISTA ou ESCOLA ou SENHORIO
    foto          VARBINARY(MAX) NULL,
    dataCadastro  SMALLDATETIME  NOT NULL,
    statusUsuario VARCHAR(20)    NOT NULL, -- ATIVO ou INATIVO ou TROCAR_SENHA
@@ -126,4 +126,3 @@ CREATE TABLE Mensagem
  
 SELECT * FROM Usuario
 SELECT * FROM Mensagem
-SELECT * FROM Escola

@@ -5,6 +5,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { User, Building, Home, Settings, LogOut, Bell, Menu, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import StudentDashboard from '@/components/StudentDashboard';
+import SchoolDashboard from '@/components/SchoolDashboard';
+import LandlordDashboard from '@/components/LandlordDashboard';
+import EditProfile from '@/components/EditProfile';
+import ChangePassword from '@/components/ChangePassword';
+import Preferences from '@/components/Preferences';
+import Notifications from '@/components/Notifications';
+
+type SettingsView = 'main' | 'profile' | 'password' | 'preferences' | 'notifications';
 
 interface UserData {
   id: string;
@@ -12,12 +21,14 @@ interface UserData {
   userType: 'student' | 'school' | 'senhorio';
   name: string;
   loginTime: string;
+  profileComplete: boolean;
 }
 
 const Dashboard = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [settingsView, setSettingsView] = useState<SettingsView>('main');
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -39,6 +50,13 @@ const Dashboard = () => {
     }
   }, [navigate]);
 
+  const handleProfileSave = () => {
+    if (!userData) return;
+    const updatedUserData = { ...userData, profileComplete: true };
+    localStorage.setItem('userData', JSON.stringify(updatedUserData));
+    setUserData(updatedUserData);
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('userData');
@@ -56,6 +74,85 @@ const Dashboard = () => {
       </div>
     );
   }
+
+  // Se o perfil não estiver completo para escola ou senhorio, mostrar o formulário de edição
+  if (!userData.profileComplete && (userData.userType === 'school' || userData.userType === 'senhorio')) {
+    return (
+      <div className={`min-h-screen flex items-center justify-center p-4 bg-gray-100`}>
+        <div className="w-full max-w-2xl">
+          <Card>
+            <CardHeader>
+              <CardTitle>Complete seu Perfil</CardTitle>
+              <p className="text-gray-600">
+                Para continuar, por favor, preencha as informações abaixo.
+              </p>
+            </CardHeader>
+            <CardContent>
+              <EditProfile
+                userData={userData}
+                onBack={handleLogout} // O botão "Cancelar" fará logout
+                onSave={handleProfileSave}
+              />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  const renderSettingsContent = () => {
+    switch (settingsView) {
+      case 'profile':
+        return <EditProfile userData={userData} onBack={() => setSettingsView('main')} />;
+      case 'password':
+        return <ChangePassword onBack={() => setSettingsView('main')} />;
+      case 'preferences':
+        return <Preferences onBack={() => setSettingsView('main')} />;
+      case 'notifications':
+        return <Notifications onBack={() => setSettingsView('main')} />;
+      default:
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Configurações</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <h4 className="font-medium mb-2">Informações da Conta</h4>
+                <p className="text-sm text-gray-600">Email: {userData.email}</p>
+                <p className="text-sm text-gray-600">
+                  Tipo: {isSchool ? 'Instituição' : isSenhorio ? 'Senhorio' : 'Estudante'}
+                </p>
+              </div>
+              <div className="space-y-2">
+                <Button variant="outline" className="w-full justify-start text-sm" onClick={() => setSettingsView('profile')}>
+                  Editar Perfil
+                </Button>
+                <Button variant="outline" className="w-full justify-start text-sm" onClick={() => setSettingsView('password')}>
+                  Alterar Senha
+                </Button>
+                <Button variant="outline" className="w-full justify-start text-sm" onClick={() => setSettingsView('preferences')}>
+                  Preferências
+                </Button>
+                <Button variant="outline" className="w-full justify-start text-sm" onClick={() => setSettingsView('notifications')}>
+                  Notificações
+                </Button>
+              </div>
+              <div className="pt-4 border-t">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-sm text-red-600 hover:text-red-700"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sair da Conta
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        );
+    }
+  };
 
   const isSchool = userData.userType === 'school';
   const isSenhorio = userData.userType === 'senhorio';
@@ -188,6 +285,10 @@ const Dashboard = () => {
               </CardHeader>
             </Card>
 
+            {userData.userType === 'student' && <StudentDashboard />}
+            {userData.userType === 'school' && <SchoolDashboard />}
+            {userData.userType === 'senhorio' && <LandlordDashboard />}
+
             {/* Quick Actions */}
             <div className="grid md:grid-cols-2 gap-4">
               <Card className="hover:shadow-md transition-shadow">
@@ -266,46 +367,7 @@ const Dashboard = () => {
           {/* Settings Sidebar - só aparece quando ativado */}
           {showSettings && (
             <div className="lg:col-span-1">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Configurações</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <h4 className="font-medium mb-2">Informações da Conta</h4>
-                    <p className="text-sm text-gray-600">Email: {userData.email}</p>
-                    <p className="text-sm text-gray-600">
-                      Tipo: {isSchool ? 'Instituição' : isSenhorio ? 'Senhorio' : 'Estudante'}
-                    </p>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Button variant="outline" className="w-full justify-start text-sm">
-                      Editar Perfil
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start text-sm">
-                      Alterar Senha
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start text-sm">
-                      Preferências
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start text-sm">
-                      Notificações
-                    </Button>
-                  </div>
-
-                  <div className="pt-4 border-t">
-                    <Button 
-                      variant="ghost" 
-                      className="w-full justify-start text-sm text-red-600 hover:text-red-700"
-                      onClick={handleLogout}
-                    >
-                      <LogOut className="h-4 w-4 mr-2" />
-                      Sair da Conta
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+              {renderSettingsContent()}
             </div>
           )}
         </div>
