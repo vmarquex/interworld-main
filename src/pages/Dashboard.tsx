@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { User, Building, Home, Settings, LogOut, Bell, Menu, X } from 'lucide-react';
@@ -299,9 +299,11 @@ const Dashboard = () => {
                         : t('exploreProgramsDescription')
                       }
                     </p>
-                    <Button className={`bg-gradient-to-r ${themeColors.button} text-white`}>
-                      {isSchool ? t('manage') : isSenhorio ? t('manage') : t('explore')}
-                    </Button>
+                    <Link to="/precos">
+                      <Button className={`bg-gradient-to-r ${themeColors.button} text-white`}>
+                        {isSchool ? t('manage') : isSenhorio ? t('manage') : t('explore')}
+                      </Button>
+                    </Link>
                   </CardContent>
                 </Card>
 
