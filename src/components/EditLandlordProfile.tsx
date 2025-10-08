@@ -73,15 +73,19 @@ const EditLandlordProfile = ({ onBack, onSave, userData }: EditLandlordProfilePr
             <Input id="local" placeholder="Ex: Dublin" />
           </div>
           <div className="space-y-2">
+            <Label htmlFor="vacancies">Número de Vagas</Label>
+            <Input id="vacancies" name="vacancies" type="number" placeholder="Ex: 3" required />
+          </div>
+          <div className="space-y-2">
             <Label htmlFor="descricao">Descrição</Label>
             <Textarea id="descricao" placeholder="Fale um pouco sobre você..." />
           </div>
         </CardContent>
         <CardFooter className="flex justify-end space-x-2">
           <Button type="button" variant="ghost" onClick={onBack}>
-            Sair
+            Cancelar
           </Button>
-          <Button type="submit">Cadastrar intercâmbio</Button>
+          <Button type="submit">Salvar Alterações</Button>
         </CardFooter>
       </Card>
     </form>

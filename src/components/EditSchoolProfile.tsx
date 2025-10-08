@@ -93,10 +93,10 @@ const EditSchoolProfile = ({ onBack, onSave, userData }: EditSchoolProfileProps)
           </div>
         </CardContent>
         <CardFooter className="flex justify-end space-x-2">
-          <Button type="button" backgroundColor="red" variant="ghost" onClick={onBack}>
-            Sair
+          <Button type="button" variant="ghost" onClick={onBack}>
+            Cancelar
           </Button>
-          <Button type="submit">Salvar intercâmbio</Button>
+          <Button type="submit">Salvar Alterações</Button>
         </CardFooter>
       </Card>
     </form>

@@ -8,17 +8,20 @@ import { PlusCircle, Trash2 } from 'lucide-react';
 interface Course {
   id: number;
   name: string;
+  vacancies: number;
 }
 
 const SchoolDashboard = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [newCourse, setNewCourse] = useState('');
+  const [newVacancies, setNewVacancies] = useState('');
 
   const handleAddCourse = (e: React.FormEvent) => {
     e.preventDefault();
-    if (newCourse.trim() === '') return;
-    setCourses([...courses, { id: Date.now(), name: newCourse.trim() }]);
+    if (newCourse.trim() === '' || !newVacancies) return;
+    setCourses([...courses, { id: Date.now(), name: newCourse.trim(), vacancies: parseInt(newVacancies, 10) }]);
     setNewCourse('');
+    setNewVacancies('');
   };
 
   const handleDeleteCourse = (id: number) => {
@@ -34,8 +37,8 @@ const SchoolDashboard = () => {
         <CardContent className="space-y-6">
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Adicionar Novo Curso</h3>
-            <form onSubmit={handleAddCourse} className="flex items-center space-x-2">
-              <div className="flex-grow">
+            <form onSubmit={handleAddCourse} className="flex items-start md:items-center space-x-2 flex-col md:flex-row gap-2">
+              <div className="flex-grow w-full">
                 <Label htmlFor="course-name" className="sr-only">Nome do Curso</Label>
                 <Input
                   id="course-name"
@@ -43,9 +46,22 @@ const SchoolDashboard = () => {
                   placeholder="Ex: Inglês Intensivo"
                   value={newCourse}
                   onChange={(e) => setNewCourse(e.target.value)}
+                  required
                 />
               </div>
-              <Button type="submit">
+              <div className="w-full md:w-auto">
+                <Label htmlFor="course-vacancies" className="sr-only">Vagas</Label>
+                <Input
+                  id="course-vacancies"
+                  type="number"
+                  placeholder="Vagas"
+                  value={newVacancies}
+                  onChange={(e) => setNewVacancies(e.target.value)}
+                  className="w-full md:w-24"
+                  required
+                />
+              </div>
+              <Button type="submit" className="w-full md:w-auto">
                 <PlusCircle className="h-4 w-4 mr-2" />
                 Adicionar
               </Button>
@@ -59,9 +75,12 @@ const SchoolDashboard = () => {
                 {courses.map((course) => (
                   <li key={course.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-md">
                     <span className="font-medium">{course.name}</span>
-                    <Button variant="ghost" size="icon" onClick={() => handleDeleteCourse(course.id)}>
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
+                    <div className="flex items-center space-x-4">
+                      <span className="text-sm text-gray-600 bg-gray-200 px-2 py-1 rounded-md">{course.vacancies} vagas</span>
+                      <Button variant="ghost" size="icon" onClick={() => handleDeleteCourse(course.id)}>
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </Button>
+                    </div>
                   </li>
                 ))}
               </ul>

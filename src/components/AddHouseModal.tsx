@@ -48,6 +48,10 @@ const AddHouseModal = ({ isOpen, onClose, onAddHouse }: AddHouseModalProps) => {
               <Input id="rooms" name="rooms" type="number" required />
             </div>
             <div className="space-y-2">
+              <Label htmlFor="vacancies">Vagas para estudantes</Label>
+              <Input id="vacancies" name="vacancies" type="number" required />
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="description">Descrição</Label>
               <Textarea id="description" name="description" />
             </div>

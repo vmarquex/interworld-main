@@ -12,6 +12,7 @@ import EditProfile from '@/components/EditProfile';
 import ChangePassword from '@/components/ChangePassword';
 import Preferences from '@/components/Preferences';
 import Notifications from '@/components/Notifications';
+import { useTranslation } from 'react-i18next';
 
 type SettingsView = 'main' | 'profile' | 'password' | 'preferences' | 'notifications';
 
@@ -31,6 +32,7 @@ const Dashboard = () => {
   const [settingsView, setSettingsView] = useState<SettingsView>('main');
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('isLoggedIn');
@@ -50,9 +52,9 @@ const Dashboard = () => {
     }
   }, [navigate]);
 
-  const handleProfileSave = () => {
+  const handleProfileSave = (newData: Partial<UserData>) => {
     if (!userData) return;
-    const updatedUserData = { ...userData, profileComplete: true };
+    const updatedUserData = { ...userData, ...newData, profileComplete: true };
     localStorage.setItem('userData', JSON.stringify(updatedUserData));
     setUserData(updatedUserData);
   };
@@ -75,35 +77,10 @@ const Dashboard = () => {
     );
   }
 
-  // Se o perfil não estiver completo para escola ou senhorio, mostrar o formulário de edição
-  if (!userData.profileComplete && (userData.userType === 'school' || userData.userType === 'senhorio')) {
-    return (
-      <div className={`min-h-screen flex items-center justify-center p-4 bg-gray-100`}>
-        <div className="w-full max-w-2xl">
-          <Card>
-            <CardHeader>
-              <CardTitle>Complete seu Perfil</CardTitle>
-              <p className="text-gray-600">
-                Para continuar, por favor, preencha as informações abaixo.
-              </p>
-            </CardHeader>
-            <CardContent>
-              <EditProfile
-                userData={userData}
-                onBack={handleLogout} // O botão "Cancelar" fará logout
-                onSave={handleProfileSave}
-              />
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
-
   const renderSettingsContent = () => {
     switch (settingsView) {
       case 'profile':
-        return <EditProfile userData={userData} onBack={() => setSettingsView('main')} />;
+        return <EditProfile userData={userData} onBack={() => setSettingsView('main')} onSave={(newData) => { handleProfileSave(newData); setSettingsView('main'); }} />;
       case 'password':
         return <ChangePassword onBack={() => setSettingsView('main')} />;
       case 'preferences':
@@ -189,9 +166,9 @@ const Dashboard = () => {
                 {isSchool ? <Building className="h-5 w-5 text-white" /> : isSenhorio ? <Home className="h-5 w-5 text-white" /> : <User className="h-5 w-5 text-white" />}
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">InterWorld</h1>
+                <h1 className="text-xl font-bold text-gray-900">{t('dashboardTitle')}</h1>
                 <p className="text-sm text-gray-600">
-                  {isSchool ? 'Painel Institucional' : isSenhorio ? 'Área do Senhorio' : 'Área do Estudante'}
+                  {isSchool ? t('schoolPanel') : isSenhorio ? t('landlordPanel') : t('studentPanel')}
                 </p>
               </div>
             </div>
@@ -204,11 +181,11 @@ const Dashboard = () => {
                 className={showSettings ? themeColors.accent : ''}
               >
                 <Settings className="h-4 w-4 mr-2" />
-                Configurações
+                {t('settings')}
               </Button>
               <Button variant="ghost" size="sm">
                 <Bell className="h-4 w-4 mr-2" />
-                Notificações
+                {t('notifications')}
               </Button>
               <Button
                 variant="outline"
@@ -217,7 +194,7 @@ const Dashboard = () => {
                 className="text-red-600 hover:text-red-700"
               >
                 <LogOut className="h-4 w-4 mr-2" />
-                Sair
+                {t('logout')}
               </Button>
             </div>
 
@@ -245,11 +222,11 @@ const Dashboard = () => {
                 }}
               >
                 <Settings className="h-4 w-4 mr-2" />
-                Configurações
+                {t('settings')}
               </Button>
               <Button variant="ghost" className="w-full justify-start">
                 <Bell className="h-4 w-4 mr-2" />
-                Notificações
+                {t('notifications')}
               </Button>
               <Button
                 variant="ghost"
@@ -257,7 +234,7 @@ const Dashboard = () => {
                 onClick={handleLogout}
               >
                 <LogOut className="h-4 w-4 mr-2" />
-                Sair
+                {t('logout')}
               </Button>
             </div>
           )}
@@ -265,84 +242,65 @@ const Dashboard = () => {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-4 gap-6">
-          {/* Main Content */}
-          <div className="lg:col-span-3 space-y-6">
-            {/* Welcome Card */}
+        {!userData.profileComplete && (userData.userType === 'school' || userData.userType === 'senhorio') ? (
+          <div className="w-full max-w-2xl mx-auto">
             <Card>
               <CardHeader>
-                <CardTitle className="text-2xl">
-                  Olá, {userData.name}! 👋
-                </CardTitle>
+                <CardTitle>Complete seu Perfil</CardTitle>
                 <p className="text-gray-600">
-                  {isSchool 
-                    ? 'Gerencie suas oportunidades de intercâmbio e conecte-se com estudantes.'
-                    : isSenhorio
-                    ? 'Gerencie suas propriedades e conecte-se com estudantes de intercâmbio.'
-                    : 'Explore oportunidades de intercâmbio e avance em sua jornada acadêmica.'
-                  }
+                  Para continuar, por favor, preencha as informações abaixo.
                 </p>
               </CardHeader>
+              <CardContent>
+                <EditProfile
+                  userData={userData}
+                  onBack={handleLogout} // O botão "Cancelar" fará logout
+                  onSave={handleProfileSave}
+                />
+              </CardContent>
             </Card>
-
-            {userData.userType === 'student' && <StudentDashboard />}
-            {userData.userType === 'school' && <SchoolDashboard />}
-            {userData.userType === 'senhorio' && <LandlordDashboard />}
-
-            {/* Quick Actions */}
-            <div className="grid md:grid-cols-2 gap-4">
-              <Card className="hover:shadow-md transition-shadow">
-                <CardContent className="p-6">
-                  <h3 className="text-lg font-semibold mb-2">
-                    {isSchool ? 'Gerenciar Programas' : isSenhorio ? 'Gerenciar Propriedades' : 'Explorar Programas'}
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-4">
-                    {isSchool 
-                      ? 'Crie e gerencie seus programas de intercâmbio.'
+          </div>
+        ) : (
+          <div className="grid lg:grid-cols-4 gap-6">
+            {/* Main Content */}
+            <div className="lg:col-span-3 space-y-6">
+              {/* Welcome Card */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-2xl">
+                    {t('hello', { name: userData.name })}
+                  </CardTitle>
+                  <p className="text-gray-600">
+                    {isSchool
+                      ? t('schoolWelcome')
                       : isSenhorio
-                      ? 'Gerencie suas propriedades disponíveis para locação.'
-                      : 'Descubra programas que combinam com seu perfil.'
-                    }
+                      ? t('landlordWelcome')
+                      : t('studentWelcome')}
                   </p>
-                  <Button className={`bg-gradient-to-r ${themeColors.button} text-white`}>
-                    {isSchool ? 'Gerenciar' : isSenhorio ? 'Gerenciar' : 'Explorar'}
-                  </Button>
-                </CardContent>
+                </CardHeader>
               </Card>
 
-              <Card className="hover:shadow-md transition-shadow">
-                <CardContent className="p-6">
-                  <h3 className="text-lg font-semibold mb-2">
-                    {isSchool ? 'Candidatos' : isSenhorio ? 'Estudantes Interessados' : 'Minhas Candidaturas'}
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-4">
-                    {isSchool 
-                      ? 'Veja estudantes interessados em seus programas.'
-                      : isSenhorio
-                      ? 'Veja estudantes interessados em suas propriedades.'
-                      : 'Acompanhe o status de suas candidaturas.'
-                    }
-                  </p>
-                  <Button variant="outline">
-                    {isSchool ? 'Ver Candidatos' : isSenhorio ? 'Ver Estudantes' : 'Ver Status'}
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
+              {userData.userType === 'student' && <StudentDashboard />}
+              {userData.userType === 'school' && <SchoolDashboard />}
+              {userData.userType === 'senhorio' && <LandlordDashboard />}
 
-            {/* Additional Actions for Senhorio */}
-            {isSenhorio && (
+              {/* Quick Actions */}
               <div className="grid md:grid-cols-2 gap-4">
                 <Card className="hover:shadow-md transition-shadow">
                   <CardContent className="p-6">
                     <h3 className="text-lg font-semibold mb-2">
-                      Adicionar Propriedade
+                      {isSchool ? t('managePrograms') : isSenhorio ? t('manageProperties') : t('explorePrograms')}
                     </h3>
                     <p className="text-sm text-gray-600 mb-4">
-                      Cadastre uma nova propriedade para locação.
+                      {isSchool 
+                        ? t('createManagePrograms')
+                        : isSenhorio
+                        ? t('managePropertiesDescription')
+                        : t('exploreProgramsDescription')
+                      }
                     </p>
-                    <Button variant="outline" className="w-full">
-                      Cadastrar
+                    <Button className={`bg-gradient-to-r ${themeColors.button} text-white`}>
+                      {isSchool ? t('manage') : isSenhorio ? t('manage') : t('explore')}
                     </Button>
                   </CardContent>
                 </Card>
@@ -350,27 +308,65 @@ const Dashboard = () => {
                 <Card className="hover:shadow-md transition-shadow">
                   <CardContent className="p-6">
                     <h3 className="text-lg font-semibold mb-2">
-                      Relatórios
+                      {isSchool ? t('candidates') : isSenhorio ? t('interestedStudents') : t('myApplications')}
                     </h3>
                     <p className="text-sm text-gray-600 mb-4">
-                      Visualize relatórios de ocupação e receita.
+                      {isSchool 
+                        ? t('viewInterestedStudents')
+                        : isSenhorio
+                        ? t('viewInterestedStudentsDescription')
+                        : t('trackApplicationStatus')
+                      }
                     </p>
-                    <Button variant="outline" className="w-full">
-                      Ver Relatórios
+                    <Button variant="outline">
+                      {isSchool ? t('viewCandidates') : isSenhorio ? t('viewStudents') : t('viewStatus')}
                     </Button>
                   </CardContent>
                 </Card>
               </div>
+
+              {/* Additional Actions for Senhorio */}
+              {isSenhorio && (
+                <div className="grid md:grid-cols-2 gap-4">
+                  <Card className="hover:shadow-md transition-shadow">
+                    <CardContent className="p-6">
+                      <h3 className="text-lg font-semibold mb-2">
+                        {t('addProperty')}
+                      </h3>
+                      <p className="text-sm text-gray-600 mb-4">
+                        {t('registerPropertyDescription')}
+                      </p>
+                      <Button variant="outline" className="w-full">
+                        {t('register')}
+                      </Button>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="hover:shadow-md transition-shadow">
+                    <CardContent className="p-6">
+                      <h3 className="text-lg font-semibold mb-2">
+                        {t('reports')}
+                      </h3>
+                      <p className="text-sm text-gray-600 mb-4">
+                        {t('viewReportsDescription')}
+                      </p>
+                      <Button variant="outline" className="w-full">
+                        {t('viewReports')}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+            </div>
+
+            {/* Settings Sidebar - só aparece quando ativado */}
+            {showSettings && (
+              <div className="lg:col-span-1">
+                {renderSettingsContent()}
+              </div>
             )}
           </div>
-
-          {/* Settings Sidebar - só aparece quando ativado */}
-          {showSettings && (
-            <div className="lg:col-span-1">
-              {renderSettingsContent()}
-            </div>
-          )}
-        </div>
+        )}
       </div>
     </div>
   );

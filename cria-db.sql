@@ -106,6 +106,43 @@ CREATE TABLE Estudante
     FOREIGN KEY (usuario_id) REFERENCES Usuario (id)
 );
 
+CREATE TABLE CadastroEscola
+(
+    id               INT IDENTITY PRIMARY KEY,
+    nomeEscola       VARCHAR(100)   NOT NULL,
+    emailContato     VARCHAR(100)   NOT NULL,
+    pais             VARCHAR(50)    NOT NULL,
+    regiao           VARCHAR(50)    NOT NULL,
+    telefone         VARCHAR(20)    NOT NULL,
+    website          VARCHAR(100)   NOT NULL,
+    endereco         VARCHAR(150)   NOT NULL,
+    descricao        VARCHAR(400)   NULL,
+    foto             VARBINARY(MAX) NULL,
+    usuario_id       INT            NOT NULL,
+    dataCadastro     SMALLDATETIME  NOT NULL DEFAULT GETDATE(),
+    statusCadastro   VARCHAR(10)    NOT NULL DEFAULT 'ATIVO', -- ATIVO / INATIVO
+
+    FOREIGN KEY (usuario_id) REFERENCES Usuario (id)
+);
+
+CREATE TABLE CadastroCasa
+(
+    id               INT IDENTITY PRIMARY KEY,
+    nomeSenhorio     VARCHAR(100)   NOT NULL,
+    emailContato     VARCHAR(100)   NOT NULL,
+    telefone         VARCHAR(20)    NOT NULL,
+    pais             VARCHAR(50)    NOT NULL,
+    localidade       VARCHAR(100)   NOT NULL,
+    numeroVagas      INT            NOT NULL,
+    descricao        VARCHAR(400)   NULL,
+    foto             VARBINARY(MAX) NULL,
+    usuario_id       INT            NOT NULL,
+    dataCadastro     SMALLDATETIME  NOT NULL DEFAULT GETDATE(),
+    statusCadastro   VARCHAR(10)    NOT NULL DEFAULT 'ATIVO', -- ATIVO / INATIVO
+
+    FOREIGN KEY (usuario_id) REFERENCES Usuario (id)
+);
+
 CREATE TABLE Mensagem
 (
     id              INT             IDENTITY,

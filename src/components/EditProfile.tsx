@@ -5,6 +5,7 @@ import EditLandlordProfile from './EditLandlordProfile';
 
 interface EditProfileProps {
   onBack: () => void;
+  onSave: (data: any) => void;
   userData: {
     name: string;
     email: string;

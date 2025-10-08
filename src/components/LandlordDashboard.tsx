@@ -10,6 +10,7 @@ import AddHouseModal from './AddHouseModal';
 interface House {
   id: number;
   address: string;
+  vacancies: number;
 }
 
 const LandlordDashboard = () => {
@@ -53,9 +54,12 @@ const LandlordDashboard = () => {
                       <Home className="h-5 w-5 text-gray-500" />
                       <span className="font-medium">{house.address}</span>
                     </div>
-                    <Button variant="ghost" size="icon" onClick={() => handleDeleteHouse(house.id)}>
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
+                    <div className="flex items-center space-x-4">
+                      <span className="text-sm text-gray-600 bg-gray-200 px-2 py-1 rounded-md">{house.vacancies} vagas</span>
+                      <Button variant="ghost" size="icon" onClick={() => handleDeleteHouse(house.id)}>
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </Button>
+                    </div>
                   </li>
                 ))}
               </ul>

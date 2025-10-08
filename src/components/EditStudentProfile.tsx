@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,15 +6,16 @@ import { Label } from '@/components/ui/label';
 
 interface EditStudentProfileProps {
   onBack: () => void;
-  onSave: () => void;
+  onSave: (data: { name: string }) => void;
   userData: { name: string; email: string };
 }
 
 const EditStudentProfile = ({ onBack, onSave, userData }: EditStudentProfileProps) => {
+  const [name, setName] = useState(userData.name);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Adicionar lógica de validação e envio de dados aqui
-    onSave();
+    onSave({ name });
   };
 
   return (
@@ -26,7 +27,7 @@ const EditStudentProfile = ({ onBack, onSave, userData }: EditStudentProfileProp
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">Nome</Label>
-            <Input id="name" defaultValue={userData.name} />
+            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
@@ -35,9 +36,9 @@ const EditStudentProfile = ({ onBack, onSave, userData }: EditStudentProfileProp
         </CardContent>
         <CardFooter className="flex justify-end space-x-2">
           <Button type="button" variant="ghost" onClick={onBack}>
-            Sair
+            Cancelar
           </Button>
-          <Button type="submit">Salvar intercâmbio</Button>
+          <Button type="submit">Salvar Alterações</Button>
         </CardFooter>
       </Card>
     </form>
