@@ -6,6 +6,33 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
+const languagePrograms = [
+  {
+    title: 'Curso de Idioma - 4 semanas',
+    duration: '4 semanas',
+    price: 'US$ 1,550',
+    vacancies: 15,
+    deadline: '2025-12-31',
+    requirements: ['Nível Básico', 'Passaporte Válido']
+  },
+  {
+    title: 'Curso de Idioma - 8 semanas',
+    duration: '8 semanas',
+    price: 'US$ 2,900',
+    vacancies: 10,
+    deadline: '2025-12-31',
+    requirements: ['Nível Básico', 'Passaporte Válido', 'Visto de Estudante']
+  },
+  {
+    title: 'Curso de Idioma - 12 semanas',
+    duration: '12 semanas',
+    price: 'US$ 4,200',
+    vacancies: 8,
+    deadline: '2025-12-31',
+    requirements: ['Nível Intermediário', 'Passaporte Válido', 'Visto de Estudante']
+  }
+];
+
 const countryData = {
   'estados-unidos': {
     name: 'Estados Unidos',
@@ -17,47 +44,13 @@ const countryData = {
         name: 'Califórnia',
         image: 'https://images.unsplash.com/photo-1472396961693-142e6e269027?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
         description: 'Centro da tecnologia mundial e inovação.',
-        programs: [
-          {
-            title: 'Graduação em Ciência da Computação - Stanford',
-            duration: '4 anos',
-            price: 'US$ 80,000/ano',
-            vacancies: 3,
-            deadline: '2024-03-15',
-            requirements: ['TOEFL 110+', 'SAT 1500+', 'GPA 3.9+']
-          },
-          {
-            title: 'MBA Silicon Valley - UC Berkeley',
-            duration: '2 anos',
-            price: 'US$ 85,000/ano',
-            vacancies: 2,
-            deadline: '2024-04-01',
-            requirements: ['GMAT 700+', 'TOEFL 105+', '3+ anos exp.']
-          }
-        ]
+        programs: languagePrograms.slice(0, 2)
       },
       {
         name: 'Nova York',
         image: 'https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
         description: 'Capital financeira mundial e centro cultural.',
-        programs: [
-          {
-            title: 'Mestrado em Finanças - Columbia',
-            duration: '2 anos',
-            price: 'US$ 75,000/ano',
-            vacancies: 4,
-            deadline: '2024-03-30',
-            requirements: ['GMAT 680+', 'TOEFL 100+', 'Graduação relacionada']
-          },
-          {
-            title: 'Arte e Design - Parsons',
-            duration: '4 anos',
-            price: 'US$ 65,000/ano',
-            vacancies: 6,
-            deadline: '2024-02-15',
-            requirements: ['Portfolio', 'TOEFL 92+', 'Ensaio criativo']
-          }
-        ]
+        programs: languagePrograms
       }
     ]
   },
@@ -71,31 +64,13 @@ const countryData = {
         name: 'Ontário',
         image: 'https://images.unsplash.com/photo-1472396961693-142e6e269027?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
         description: 'Província mais populosa com Toronto e Ottawa.',
-        programs: [
-          {
-            title: 'Graduação em Engenharia - University of Toronto',
-            duration: '4 anos',
-            price: 'CAD$ 45,000/ano',
-            vacancies: 8,
-            deadline: '2024-03-01',
-            requirements: ['IELTS 6.5+', 'Notas altas em matemática', 'Carta motivação']
-          }
-        ]
+        programs: languagePrograms
       },
       {
         name: 'British Columbia',
         image: 'https://images.unsplash.com/photo-1469041797191-50ace28483c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
         description: 'Costa oeste com Vancouver e natureza exuberante.',
-        programs: [
-          {
-            title: 'Mestrado em Sustentabilidade - UBC',
-            duration: '2 anos',
-            price: 'CAD$ 35,000/ano',
-            vacancies: 5,
-            deadline: '2024-04-15',
-            requirements: ['IELTS 7.0+', 'Graduação relacionada', 'Experiência ambiental']
-          }
-        ]
+        programs: languagePrograms.slice(0, 2)
       }
     ]
   },
@@ -109,16 +84,7 @@ const countryData = {
         name: 'Inglaterra',
         image: 'https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
         description: 'Lar de Oxford, Cambridge e Londres.',
-        programs: [
-          {
-            title: 'Graduação em História - Oxford',
-            duration: '3 anos',
-            price: '£ 40,000/ano',
-            vacancies: 2,
-            deadline: '2024-01-15',
-            requirements: ['IELTS 7.5+', 'A-Levels AAA', 'Entrevista']
-          }
-        ]
+        programs: languagePrograms
       }
     ]
   },
@@ -132,16 +98,7 @@ const countryData = {
         name: 'New South Wales',
         image: 'https://images.unsplash.com/photo-1469041797191-50ace28483c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
         description: 'Sydney e suas praias mundialmente famosas.',
-        programs: [
-          {
-            title: 'Mestrado em Medicina - UNSW',
-            duration: '2 anos',
-            price: 'AUD$ 55,000/ano',
-            vacancies: 3,
-            deadline: '2024-05-01',
-            requirements: ['IELTS 7.0+', 'Graduação em ciências', 'GAMSAT']
-          }
-        ]
+        programs: languagePrograms
       }
     ]
   },
@@ -155,16 +112,7 @@ const countryData = {
         name: 'Bayern',
         image: 'https://images.unsplash.com/photo-1472396961693-142e6e269027?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
         description: 'Munique e tradição em engenharia.',
-        programs: [
-          {
-            title: 'Doutorado em Engenharia - TUM',
-            duration: '3-4 anos',
-            price: 'Gratuito',
-            vacancies: 4,
-            deadline: '2024-06-01',
-            requirements: ['Alemão B2+', 'Mestrado', 'Projeto pesquisa']
-          }
-        ]
+        programs: languagePrograms
       }
     ]
   },
@@ -178,16 +126,7 @@ const countryData = {
         name: 'Île-de-France',
         image: 'https://images.unsplash.com/photo-1466442929976-97f336a657be?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
         description: 'Paris, a cidade luz e centro cultural.',
-        programs: [
-          {
-            title: 'Mestrado em Arte - Sorbonne',
-            duration: '2 anos',
-            price: '€ 15,000/ano',
-            vacancies: 6,
-            deadline: '2024-04-30',
-            requirements: ['Francês B2+', 'Portfolio', 'Graduação em artes']
-          }
-        ]
+        programs: languagePrograms
       }
     ]
   }

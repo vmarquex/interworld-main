@@ -5,6 +5,58 @@ import { Users, Target, Award, Globe } from 'lucide-react';
 import Header from '@/components/Header';
 import { Card, CardContent } from '@/components/ui/card';
 
+import RafaFoto from '@/assets/team/rafa.foto.png';
+import MahFoto from '@/assets/team/mah.foto.png';
+import BrunoFoto from '@/assets/team/bruno.foto.png';
+import GabrielFoto from '@/assets/team/gabriel.foto.png';
+import ViktorFoto from '@/assets/team/viktor.foto.png';
+import ViniciosFoto from '@/assets/team/vinicios.foto.png';
+
+const teamMembers = [
+  {
+    name: 'Rafael Leite',
+    role: 'CEO e Fundador',
+    bio: 'Ex-intercambista na Universidade de Harvard',
+    image: RafaFoto,
+    gradient: 'from-blue-900 to-blue-600',
+  },
+  {
+    name: 'Maria Freire',
+    role: 'Diretora de Programas',
+    bio: 'MBA pela London Business School',
+    image: MahFoto,
+    gradient: 'from-blue-600 to-blue-400',
+  },
+  {
+    name: 'Bruno Alves',
+    role: 'Diretor de Relacionamento',
+    bio: 'Mestrado na Universidade de Toronto',
+    image: BrunoFoto,
+    gradient: 'from-blue-400 to-blue-300',
+  },
+  {
+    name: 'Gabriel Batista',
+    role: 'Consultor Educacional',
+    bio: 'Especialista em programas na América do Norte',
+    image: GabrielFoto,
+    gradient: 'from-green-500 to-green-300',
+  },
+  {
+    name: 'Viktor Hanry',
+    role: 'Consultor Educacional',
+    bio: 'Especialista em programas na Europa',
+    image: ViktorFoto,
+    gradient: 'from-yellow-500 to-yellow-300',
+  },
+  {
+    name: 'Vinicios Marques',
+    role: 'Consultor Educacional',
+    bio: 'Especialista em programas na Oceania',
+    image: ViniciosFoto,
+    gradient: 'from-red-500 to-red-300',
+  },
+];
+
 const QuemSomos = () => {
   return (
     <div className="min-h-screen bg-white">
@@ -94,24 +146,18 @@ const QuemSomos = () => {
             <div className="bg-gray-50 rounded-2xl p-8">
               <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">Nossa Equipe</h2>
               <div className="grid md:grid-cols-3 gap-8">
-                <div className="text-center">
-                  <div className="w-32 h-32 bg-gradient-to-r from-blue-900 to-blue-600 rounded-full mx-auto mb-4"></div>
-                  <h3 className="text-xl font-semibold">Ana Silva</h3>
-                  <p className="text-gray-600 text-sm">CEO e Fundadora</p>
-                  <p className="text-gray-500 text-xs mt-2">Ex-intercambista na Universidade de Harvard</p>
-                </div>
-                <div className="text-center">
-                  <div className="w-32 h-32 bg-gradient-to-r from-blue-600 to-blue-400 rounded-full mx-auto mb-4"></div>
-                  <h3 className="text-xl font-semibold">Carlos Santos</h3>
-                  <p className="text-gray-600 text-sm">Diretor de Programas</p>
-                  <p className="text-gray-500 text-xs mt-2">MBA pela London Business School</p>
-                </div>
-                <div className="text-center">
-                  <div className="w-32 h-32 bg-gradient-to-r from-blue-400 to-blue-300 rounded-full mx-auto mb-4"></div>
-                  <h3 className="text-xl font-semibold">Maria Costa</h3>
-                  <p className="text-gray-600 text-sm">Diretora de Relacionamento</p>
-                  <p className="text-gray-500 text-xs mt-2">Mestrado na Universidade de Toronto</p>
-                </div>
+                {teamMembers.map((member) => (
+                  <div key={member.name} className="text-center">
+                    <img
+                      src={member.image}
+                      alt={member.name}
+                      className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
+                    />
+                    <h3 className="text-xl font-semibold">{member.name}</h3>
+                    <p className="text-gray-600 text-sm">{member.role}</p>
+                    <p className="text-gray-500 text-xs mt-2">{member.bio}</p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

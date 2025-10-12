@@ -8,49 +8,49 @@ import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
 
 const Precos = () => {
-  const [selectedWeeks, setSelectedWeeks] = useState(2);
+  const [selectedWeeks, setSelectedWeeks] = useState(4);
   const { toast } = useToast();
 
-  const weeks = [2, 3, 4, 5, 6, 7, 8, 9, 10];
+  const weeks = [2, 4, 8, 12, 16, 24];
 
   const languageCourses = [
     {
-      name: "EF Curso Básico",
-      price: 1460,
-      description: "Curso de idioma básico com foco em conversação",
-      features: ["20 aulas por semana", "Material didático incluído", "Atividades culturais"]
+      destination: "Canadá",
+      city: "Toronto",
+      pricePer4Weeks: 1550,
+      description: "Inglês geral em um ambiente multicultural vibrante.",
+      features: ["20 aulas/semana", "Acomodação em casa de família", "Material didático", "Certificado de conclusão"],
+      flag: "🇨🇦"
     },
     {
-      name: "EF Curso Geral",
-      price: 1560,
-      description: "Curso de idioma geral com equilíbrio entre gramática e conversação",
-      features: ["26 aulas por semana", "Material didático incluído", "Atividades culturais", "Certificado"]
+      destination: "Irlanda",
+      city: "Dublin",
+      pricePer4Weeks: 1750,
+      description: "Aprenda inglês na Ilha Esmeralda, rica em cultura e história.",
+      features: ["20 aulas/semana", "Acomodação em residência estudantil", "Atividades sociais", "Suporte local"],
+      flag: "🇮🇪"
     },
     {
-      name: "EF Curso Intensivo",
-      price: 1660,
-      description: "Curso de idioma intensivo para aprendizado acelerado",
-      features: ["32 aulas por semana", "Material didático incluído", "Atividades culturais", "Certificado", "Aulas particulares"]
-    }
-  ];
-
-  const careerCourses = [
-    {
-      name: "Curso Geral de Career Skills da EF",
-      price: 1560,
-      description: "Desenvolva habilidades profissionais em inglês",
-      features: ["26 aulas por semana", "Foco em inglês para negócios", "Simulações de entrevistas", "Certificado"]
+      destination: "Malta",
+      city: "St. Julian's",
+      pricePer4Weeks: 1350,
+      description: "Estude inglês em uma ilha paradisíaca do Mediterrâneo.",
+      features: ["25 aulas/semana", "Acomodação em apartamento", "Passeios inclusos", "Ambiente internacional"],
+      flag: "🇲🇹"
     },
     {
-      name: "Curso Intensivo de Career Skills da EF",
-      price: 1660,
-      description: "Programa intensivo para carreira internacional",
-      features: ["32 aulas por semana", "Foco em inglês para negócios", "Simulações de entrevistas", "Certificado", "Mentoria profissional"]
+      destination: "África do Sul",
+      city: "Cidade do Cabo",
+      pricePer4Weeks: 1200,
+      description: "Combine o aprendizado do inglês com uma aventura inesquecível.",
+      features: ["20 aulas/semana", "Acomodação em residência", "Excursões e safáris", "Voluntariado opcional"],
+      flag: "🇿🇦"
     }
   ];
 
   const calculatePrice = (basePrice: number) => {
-    return basePrice + (selectedWeeks - 2) * 200;
+    // Calculation based on a 4-week base price
+    return (basePrice / 4) * selectedWeeks;
   };
 
   const handleRequestQuote = () => {
@@ -90,8 +90,8 @@ const Precos = () => {
           <CardContent className="p-8">
             {/* Seleção de Semanas */}
             <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                Selecione o número de semanas:
+              <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">
+                Selecione a duração do seu intercâmbio:
               </h3>
               <div className="flex items-center justify-center space-x-4">
                 <Button
@@ -144,7 +144,7 @@ const Precos = () => {
 
             {/* Cursos de Idiomas */}
             <div className="mb-8">
-              <div className="flex items-center gap-3 mb-6">
+              <div className="flex items-center gap-3 mb-6 justify-center">
                 <Badge variant="secondary" className="bg-blue-100 text-blue-800 px-4 py-2 text-sm font-medium">
                   Cursos de idiomas
                 </Badge>
@@ -153,38 +153,44 @@ const Precos = () => {
                 </Badge>
               </div>
               
-              <div className="grid md:grid-cols-3 gap-6">
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {languageCourses.map((course, index) => (
-                  <Card key={index} className="border-2 hover:border-blue-300 transition-all duration-300 hover:shadow-lg">
+                  <Card key={index} className="border-2 hover:border-blue-300 transition-all duration-300 hover:shadow-lg flex flex-col">
                     <CardHeader className="pb-4">
-                      <CardTitle className="text-lg font-semibold text-gray-900">
-                        {course.name}
-                      </CardTitle>
-                      <p className="text-sm text-gray-600">
+                      <div className="flex items-center justify-between mb-2">
+                        <CardTitle className="text-xl font-bold text-gray-900">
+                          {course.destination}
+                        </CardTitle>
+                        <span className="text-2xl">{course.flag}</span>
+                      </div>
+                      <p className="text-sm font-semibold text-blue-600">{course.city}</p>
+                      <p className="text-sm text-gray-600 pt-2">
                         {course.description}
                       </p>
                     </CardHeader>
-                    <CardContent className="pt-0">
-                      <div className="mb-4">
-                        <div className="flex items-baseline gap-1">
-                          <DollarSign className="h-5 w-5 text-green-600" />
-                          <span className="text-3xl font-bold text-gray-900">
-                            {calculatePrice(course.price).toLocaleString()}
-                          </span>
+                    <CardContent className="pt-0 flex-grow flex flex-col justify-between">
+                      <div>
+                        <div className="mb-4">
+                          <div className="flex items-baseline gap-1">
+                            <DollarSign className="h-5 w-5 text-green-600" />
+                            <span className="text-3xl font-bold text-gray-900">
+                              {calculatePrice(course.pricePer4Weeks).toLocaleString()}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-500">USD</p>
                         </div>
-                        <p className="text-sm text-gray-500">USD</p>
+                        
+                        <ul className="space-y-2 mb-6">
+                          {course.features.map((feature, featureIndex) => (
+                            <li key={featureIndex} className="flex items-center text-sm text-gray-600">
+                              <div className="w-2 h-2 bg-blue-500 rounded-full mr-3 shrink-0"></div>
+                              <span>{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                       
-                      <ul className="space-y-2 mb-6">
-                        {course.features.map((feature, featureIndex) => (
-                          <li key={featureIndex} className="flex items-center text-sm text-gray-600">
-                            <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
-                            {feature}
-                          </li>
-                        ))}
-                      </ul>
-                      
-                      <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                      <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white mt-auto">
                         Ver detalhes
                         <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>
@@ -194,57 +200,7 @@ const Precos = () => {
               </div>
             </div>
 
-            {/* Cursos de Carreira */}
-            <div className="mb-8">
-              <div className="flex items-center gap-3 mb-6">
-                <Badge variant="secondary" className="bg-green-100 text-green-800 px-4 py-2 text-sm font-medium">
-                  Carreira
-                </Badge>
-                <Badge variant="outline" className="px-3 py-1">
-                  {selectedWeeks} semanas
-                </Badge>
-              </div>
-              
-              <div className="grid md:grid-cols-2 gap-6">
-                {careerCourses.map((course, index) => (
-                  <Card key={index} className="border-2 hover:border-green-300 transition-all duration-300 hover:shadow-lg">
-                    <CardHeader className="pb-4">
-                      <CardTitle className="text-lg font-semibold text-gray-900">
-                        {course.name}
-                      </CardTitle>
-                      <p className="text-sm text-gray-600">
-                        {course.description}
-                      </p>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <div className="mb-4">
-                        <div className="flex items-baseline gap-1">
-                          <DollarSign className="h-5 w-5 text-green-600" />
-                          <span className="text-3xl font-bold text-gray-900">
-                            {calculatePrice(course.price).toLocaleString()}
-                          </span>
-                        </div>
-                        <p className="text-sm text-gray-500">USD</p>
-                      </div>
-                      
-                      <ul className="space-y-2 mb-6">
-                        {course.features.map((feature, featureIndex) => (
-                          <li key={featureIndex} className="flex items-center text-sm text-gray-600">
-                            <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
-                            {feature}
-                          </li>
-                        ))}
-                      </ul>
-                      
-                      <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
-                        Ver detalhes
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
+            {/* Cursos de Carreira REMOVED */}
 
             {/* Botão de Solicitar Orçamento */}
             <div className="text-center pt-6">
