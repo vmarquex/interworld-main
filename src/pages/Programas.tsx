@@ -15,7 +15,7 @@ const Programas = () => {
             Programas Disponíveis
           </h1>
           <p className="text-xl text-blue-100 max-w-2xl mx-auto">
-            Explore oportunidades únicas de intercâmbio e programas acadêmicos ao redor do mundo
+            Explore oportunidades únicas de intercâmbio com acomodação e estágios incluídos
           </p>
         </div>
       </div>

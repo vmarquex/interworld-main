@@ -9,7 +9,6 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import StudentRegister from "./pages/StudentRegister";
 import SchoolRegister from "./pages/SchoolRegister";
-import SenhorioRegister from "./pages/SenhorioRegister";
 import CountryDetail from "./pages/CountryDetail";
 import NotFound from "./pages/NotFound";
 import ComecarAgora from "./pages/ComecarAgora";
@@ -40,7 +39,6 @@ const App = () => {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/cadastro-estudante" element={<StudentRegister />} />
             {!isMobile && <Route path="/cadastro-escola" element={<SchoolRegister />} />}
-            {!isMobile && <Route path="/cadastro-senhorio" element={<SenhorioRegister />} />}
             <Route path="/pais/:countrySlug" element={<CountryDetail />} />
             <Route path="/paises" element={<Paises />} />
             <Route path="/quem-somos" element={<QuemSomos />} />

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Calendar, MapPin, Users, DollarSign, Clock, GraduationCap } from 'lucide-react';
+import { Calendar, MapPin, Users, DollarSign, Clock, GraduationCap, Home, Briefcase } from 'lucide-react';
 
 const programs = [
   {
@@ -19,7 +19,14 @@ const programs = [
     requirements: ['Nível Básico', 'Visto de Turista'],
     description: 'Aprenda inglês no coração da Big Apple. Aulas dinâmicas com foco em conversação e cultura local.',
     level: 'Curso de Idioma',
-    scholarship: false
+    scholarship: false,
+    housing: {
+      type: 'Casa de Família',
+      description: 'Acomodação em casa de família americana com café da manhã incluído',
+      price: 'US$ 320/semana',
+      facilities: ['Wi-Fi', 'Café da manhã', 'Quarto individual']
+    },
+    internship: null
   },
   {
     id: 2,
@@ -33,7 +40,19 @@ const programs = [
     requirements: ['Nível Intermediário', 'Passaporte Válido'],
     description: 'Desenvolva sua fluência em um ambiente acadêmico tradicional e explore a capital britânica.',
     level: 'Curso de Idioma',
-    scholarship: true
+    scholarship: true,
+    housing: {
+      type: 'Residência Estudantil',
+      description: 'Residência universitária no centro de Londres com outros estudantes internacionais',
+      price: 'US$ 280/semana',
+      facilities: ['Wi-Fi', 'Cozinha compartilhada', 'Quarto individual', 'Área de estudos']
+    },
+    internship: {
+      available: true,
+      description: 'Oportunidade de estágio em empresas locais após completar 6 semanas do curso',
+      duration: '4-8 semanas',
+      areas: ['Marketing', 'Turismo', 'Educação']
+    }
   },
   {
     id: 3,
@@ -47,7 +66,19 @@ const programs = [
     requirements: ['Nível Básico de Francês', 'Visto de Estudante'],
     description: 'Imersão completa na língua e cultura francesa na cidade mais charmosa do mundo.',
     level: 'Curso de Idioma',
-    scholarship: false
+    scholarship: false,
+    housing: {
+      type: 'Apartamento Compartilhado',
+      description: 'Apartamento compartilhado com outros estudantes no quartier Latin',
+      price: 'US$ 350/semana',
+      facilities: ['Wi-Fi', 'Cozinha completa', 'Quarto individual', 'Próximo ao metrô']
+    },
+    internship: {
+      available: true,
+      description: 'Estágio remunerado em empresas francesas após 8 semanas de curso',
+      duration: '6-12 semanas',
+      areas: ['Gastronomia', 'Fashion', 'Arte e Cultura', 'Negócios']
+    }
   },
   {
     id: 4,
@@ -61,7 +92,19 @@ const programs = [
     requirements: ['Nível Intermediário de Alemão', 'Visto Schengen'],
     description: 'Curso focado em linguagem de negócios para impulsionar sua carreira no mercado europeu.',
     level: 'Curso de Idioma',
-    scholarship: true
+    scholarship: true,
+    housing: {
+      type: 'Studio Privado',
+      description: 'Studio privado mobiliado em bairro jovem e moderno de Berlim',
+      price: 'US$ 400/semana',
+      facilities: ['Wi-Fi', 'Cozinha própria', 'Banheiro privativo', 'Área de trabalho']
+    },
+    internship: {
+      available: true,
+      description: 'Programa de estágio em startups e empresas alemãs com possibilidade de contratação',
+      duration: '8-16 semanas',
+      areas: ['Tecnologia', 'Engenharia', 'Finanças', 'Startups']
+    }
   }
 ];
 
@@ -122,6 +165,54 @@ const ProgramsSection = () => {
                 <p className="text-gray-700 text-sm leading-relaxed">
                   {program.description}
                 </p>
+
+                {/* Informações de Moradia */}
+                <div className="border rounded-lg p-3 bg-blue-50">
+                  <h4 className="font-semibold text-sm flex items-center mb-2">
+                    <Home className="h-4 w-4 mr-2 text-blue-600" />
+                    Acomodação: {program.housing.type}
+                  </h4>
+                  <p className="text-xs text-gray-600 mb-2">{program.housing.description}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-bold text-blue-700">{program.housing.price}</span>
+                    <div className="flex flex-wrap gap-1">
+                      {program.housing.facilities.map((facility, idx) => (
+                        <Badge key={idx} variant="secondary" className="text-xs">
+                          {facility}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Informações de Estágio */}
+                {program.internship ? (
+                  <div className="border rounded-lg p-3 bg-green-50">
+                    <h4 className="font-semibold text-sm flex items-center mb-2">
+                      <Briefcase className="h-4 w-4 mr-2 text-green-600" />
+                      Oportunidade de Estágio
+                    </h4>
+                    <p className="text-xs text-gray-600 mb-2">{program.internship.description}</p>
+                    <div className="space-y-1">
+                      <p className="text-xs"><strong>Duração:</strong> {program.internship.duration}</p>
+                      <div className="flex flex-wrap gap-1">
+                        <span className="text-xs text-gray-600">Áreas:</span>
+                        {program.internship.areas.map((area, idx) => (
+                          <Badge key={idx} variant="outline" className="text-xs">
+                            {area}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="border rounded-lg p-3 bg-gray-50">
+                    <p className="text-xs text-gray-500 italic flex items-center">
+                      <Briefcase className="h-4 w-4 mr-2" />
+                      Programa focado em estudos - sem estágio disponível
+                    </p>
+                  </div>
+                )}
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>

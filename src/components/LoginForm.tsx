@@ -11,7 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [userType, setUserType] = useState<'student' | 'school' | 'senhorio'>('student');
+  const [userType, setUserType] = useState<'student' | 'school'>('student');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -22,12 +22,11 @@ const LoginForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const isMockUser = (email === 'teste@gmail.com' || email === 'escola@gmail.com' || email === 'senhorio@gmail.com') && password === '12345678';
+    const isMockUser = (email === 'teste@gmail.com' || email === 'escola@gmail.com') && password === '12345678';
 
     if (isMockUser) {
       let mockName = 'Usuário Teste';
       if (email === 'escola@gmail.com') mockName = 'Escola Teste';
-      if (email === 'senhorio@gmail.com') mockName = 'Senhorio Teste';
 
       const isProfileComplete = userType === 'student'; // Students don't need to fill a profile card initially
 
@@ -65,8 +64,7 @@ const LoginForm = () => {
       }
 
       // Mapear userType para nivelAcesso
-      const nivelAcesso = userType === 'student' ? 'INTERCAMBISTA' : 
-                         userType === 'school' ? 'ESCOLA' : 'SENHORIO';
+      const nivelAcesso = userType === 'student' ? 'INTERCAMBISTA' : 'ESCOLA';
 
       // Chamada para API de login
       const response = await fetch('http://localhost:8081/api/auth/login', {
@@ -133,8 +131,6 @@ const LoginForm = () => {
     <div className={`min-h-screen flex items-center justify-center p-4 ${
       userType === 'school' 
         ? 'bg-gradient-to-br from-teal-50 via-white to-cyan-50' 
-        : userType === 'senhorio'
-        ? 'bg-gradient-to-br from-green-50 via-white to-blue-50'
         : 'bg-gradient-to-br from-blue-50 via-white to-green-50'
     }`}>
       <div className="w-full max-w-md">
@@ -143,17 +139,15 @@ const LoginForm = () => {
             <div className={`mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4 ${
               userType === 'school'
                 ? 'bg-gradient-to-r from-teal-600 to-cyan-500'
-                : userType === 'senhorio'
-                ? 'bg-gradient-to-r from-green-600 to-blue-500'
                 : 'bg-gradient-to-r from-blue-600 to-green-500'
             }`}>
-              {userType === 'senhorio' ? <Home className="h-8 w-8 text-white" /> : <User className="h-8 w-8 text-white" />}
+              <User className="h-8 w-8 text-white" />
             </div>
             <CardTitle className="text-2xl font-bold text-gray-900">
               Bem-vindo de volta!
             </CardTitle>
             <p className="text-gray-600 mt-2">
-              {userType === 'student' ? 'Acesse sua área do aluno' : userType === 'school' ? 'Acesse sua área institucional' : 'Acesse sua área de senhorio'}
+              {userType === 'student' ? 'Acesse sua área do aluno' : 'Acesse sua área institucional'}
             </p>
           </CardHeader>
 
@@ -185,18 +179,6 @@ const LoginForm = () => {
                   >
                     <Building className="h-4 w-4" />
                     <span className="text-sm font-medium">Escola</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setUserType('senhorio')}
-                    className={`flex-1 flex items-center justify-center space-x-2 py-2 px-4 rounded-md transition-all ${
-                      userType === 'senhorio'
-                        ? 'bg-white shadow-sm text-green-600'
-                        : 'text-gray-600 hover:text-gray-900'
-                    }`}
-                  >
-                    <Home className="h-4 w-4" />
-                    <span className="text-sm font-medium">Senhorio</span>
                   </button>
                 </>
               )}
@@ -294,11 +276,9 @@ const LoginForm = () => {
                 <p className="text-sm text-gray-600">
                   {userType === 'student' ? 'Ainda não tem conta?' : 'Primeira vez aqui?'}
                   <Link to={
-                    userType === 'student' ? '/cadastro-estudante' : 
-                    userType === 'school' ? '/cadastro-escola' : 
-                    '/cadastro-senhorio'
+                    userType === 'student' ? '/cadastro-estudante' : '/cadastro-escola'
                   } className="ml-1 text-blue-600 hover:text-blue-700 hover:underline font-medium">
-                    {userType === 'student' ? 'Cadastre-se' : userType === 'school' ? 'Registre sua instituição' : 'Registre sua propriedade'}
+                    {userType === 'student' ? 'Cadastre-se' : 'Registre sua instituição'}
                   </Link>
                 </p>
               )}

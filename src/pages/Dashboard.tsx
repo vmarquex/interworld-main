@@ -7,7 +7,6 @@ import { User, Building, Home, Settings, LogOut, Bell, Menu, X } from 'lucide-re
 import { useToast } from '@/hooks/use-toast';
 import StudentDashboard from '@/components/StudentDashboard';
 import SchoolDashboard from '@/components/SchoolDashboard';
-import LandlordDashboard from '@/components/LandlordDashboard';
 import EditProfile from '@/components/EditProfile';
 import ChangePassword from '@/components/ChangePassword';
 import Preferences from '@/components/Preferences';
@@ -19,7 +18,7 @@ type SettingsView = 'main' | 'profile' | 'password' | 'preferences' | 'notificat
 interface UserData {
   id: string;
   email: string;
-  userType: 'student' | 'school' | 'senhorio';
+  userType: 'student' | 'school';
   name: string;
   loginTime: string;
   profileComplete: boolean;
@@ -98,7 +97,7 @@ const Dashboard = () => {
                 <h4 className="font-medium mb-2">Informações da Conta</h4>
                 <p className="text-sm text-gray-600">Email: {userData.email}</p>
                 <p className="text-sm text-gray-600">
-                  Tipo: {isSchool ? 'Instituição' : isSenhorio ? 'Senhorio' : 'Estudante'}
+                  Tipo: {isSchool ? 'Instituição' : 'Estudante'}
                 </p>
               </div>
               <div className="space-y-2">
@@ -132,7 +131,6 @@ const Dashboard = () => {
   };
 
   const isSchool = userData.userType === 'school';
-  const isSenhorio = userData.userType === 'senhorio';
   
   const themeColors = isSchool 
     ? {
@@ -140,13 +138,6 @@ const Dashboard = () => {
         bg: 'from-teal-50 via-white to-cyan-50',
         accent: 'text-teal-600',
         button: 'from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800'
-      }
-    : isSenhorio
-    ? {
-        primary: 'from-green-600 to-blue-500',
-        bg: 'from-green-50 via-white to-blue-50',
-        accent: 'text-green-600',
-        button: 'from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700'
       }
     : {
         primary: 'from-blue-600 to-green-500',
@@ -163,12 +154,12 @@ const Dashboard = () => {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
               <div className={`w-10 h-10 bg-gradient-to-r ${themeColors.primary} rounded-full flex items-center justify-center`}>
-                {isSchool ? <Building className="h-5 w-5 text-white" /> : isSenhorio ? <Home className="h-5 w-5 text-white" /> : <User className="h-5 w-5 text-white" />}
+                {isSchool ? <Building className="h-5 w-5 text-white" /> : <User className="h-5 w-5 text-white" />}
               </div>
               <div>
                 <h1 className="text-xl font-bold text-gray-900">{t('dashboardTitle')}</h1>
                 <p className="text-sm text-gray-600">
-                  {isSchool ? t('schoolPanel') : isSenhorio ? t('landlordPanel') : t('studentPanel')}
+                  {isSchool ? t('schoolPanel') : t('studentPanel')}
                 </p>
               </div>
             </div>
@@ -242,7 +233,7 @@ const Dashboard = () => {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        {!userData.profileComplete && (userData.userType === 'school' || userData.userType === 'senhorio') ? (
+        {!userData.profileComplete && userData.userType === 'school' ? (
           <div className="w-full max-w-2xl mx-auto">
             <Card>
               <CardHeader>
@@ -270,38 +261,33 @@ const Dashboard = () => {
                   <CardTitle className="text-2xl">
                     {t('hello', { name: userData.name })}
                   </CardTitle>
-                  <p className="text-gray-600">
-                    {isSchool
-                      ? t('schoolWelcome')
-                      : isSenhorio
-                      ? t('landlordWelcome')
-                      : t('studentWelcome')}
-                  </p>
+                    <p className="text-gray-600">
+                      {isSchool
+                        ? t('schoolWelcome')
+                        : t('studentWelcome')}
+                    </p>
                 </CardHeader>
               </Card>
 
               {userData.userType === 'student' && <StudentDashboard />}
               {userData.userType === 'school' && <SchoolDashboard />}
-              {userData.userType === 'senhorio' && <LandlordDashboard />}
 
               {/* Quick Actions */}
               <div className="grid md:grid-cols-2 gap-4">
                 <Card className="hover:shadow-md transition-shadow">
                   <CardContent className="p-6">
                     <h3 className="text-lg font-semibold mb-2">
-                      {isSchool ? t('managePrograms') : isSenhorio ? t('manageProperties') : t('explorePrograms')}
+                      {isSchool ? t('managePrograms') : t('explorePrograms')}
                     </h3>
                     <p className="text-sm text-gray-600 mb-4">
                       {isSchool 
                         ? t('createManagePrograms')
-                        : isSenhorio
-                        ? t('managePropertiesDescription')
                         : t('exploreProgramsDescription')
                       }
                     </p>
                     <Link to="/precos">
                       <Button className={`bg-gradient-to-r ${themeColors.button} text-white`}>
-                        {isSchool ? t('manage') : isSenhorio ? t('manage') : t('explore')}
+                        {isSchool ? t('manage') : t('explore')}
                       </Button>
                     </Link>
                   </CardContent>
@@ -310,55 +296,21 @@ const Dashboard = () => {
                 <Card className="hover:shadow-md transition-shadow">
                   <CardContent className="p-6">
                     <h3 className="text-lg font-semibold mb-2">
-                      {isSchool ? t('candidates') : isSenhorio ? t('interestedStudents') : t('myApplications')}
+                      {isSchool ? t('candidates') : t('myApplications')}
                     </h3>
                     <p className="text-sm text-gray-600 mb-4">
                       {isSchool 
                         ? t('viewInterestedStudents')
-                        : isSenhorio
-                        ? t('viewInterestedStudentsDescription')
                         : t('trackApplicationStatus')
                       }
                     </p>
                     <Button variant="outline">
-                      {isSchool ? t('viewCandidates') : isSenhorio ? t('viewStudents') : t('viewStatus')}
+                      {isSchool ? t('viewCandidates') : t('viewStatus')}
                     </Button>
                   </CardContent>
                 </Card>
               </div>
 
-              {/* Additional Actions for Senhorio */}
-              {isSenhorio && (
-                <div className="grid md:grid-cols-2 gap-4">
-                  <Card className="hover:shadow-md transition-shadow">
-                    <CardContent className="p-6">
-                      <h3 className="text-lg font-semibold mb-2">
-                        {t('addProperty')}
-                      </h3>
-                      <p className="text-sm text-gray-600 mb-4">
-                        {t('registerPropertyDescription')}
-                      </p>
-                      <Button variant="outline" className="w-full">
-                        {t('register')}
-                      </Button>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="hover:shadow-md transition-shadow">
-                    <CardContent className="p-6">
-                      <h3 className="text-lg font-semibold mb-2">
-                        {t('reports')}
-                      </h3>
-                      <p className="text-sm text-gray-600 mb-4">
-                        {t('viewReportsDescription')}
-                      </p>
-                      <Button variant="outline" className="w-full">
-                        {t('viewReports')}
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </div>
-              )}
             </div>
 
             {/* Settings Sidebar - só aparece quando ativado */}
