@@ -30,6 +30,66 @@ const StudentRegister = () => {
     cep: ''
   });
 
+  // Funções de formatação
+  const formatCPF = (value: string) => {
+    const numbers = value.replace(/\D/g, '');
+    return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+  };
+
+  const formatRG = (value: string) => {
+    const numbers = value.replace(/\D/g, '');
+    return numbers.replace(/(\d{2})(\d{3})(\d{3})(\d{1})/, '$1.$2.$3-$4');
+  };
+
+  const formatPhone = (value: string) => {
+    const numbers = value.replace(/\D/g, '');
+    if (numbers.length <= 10) {
+      return numbers.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+    }
+    return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+  };
+
+  const formatCEP = (value: string) => {
+    const numbers = value.replace(/\D/g, '');
+    return numbers.replace(/(\d{5})(\d{3})/, '$1-$2');
+  };
+
+  const formatDate = (value: string) => {
+    const numbers = value.replace(/\D/g, '');
+    return numbers.replace(/(\d{2})(\d{2})(\d{4})/, '$1/$2/$3');
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    let formattedValue = value;
+
+    // Aplicar formatação baseada no nome do campo
+    switch (name) {
+      case 'cpf':
+        formattedValue = formatCPF(value);
+        break;
+      case 'rg':
+        formattedValue = formatRG(value);
+        break;
+      case 'telefone':
+        formattedValue = formatPhone(value);
+        break;
+      case 'cep':
+        formattedValue = formatCEP(value);
+        break;
+      case 'dataNascimento':
+        formattedValue = formatDate(value);
+        break;
+      default:
+        formattedValue = value;
+    }
+
+    setFormData(prev => ({
+      ...prev,
+      [name]: formattedValue
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -126,11 +186,6 @@ const StudentRegister = () => {
       setIsLoading(false);
     }
   };
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 py-8 px-4">
       <div className="absolute top-4 left-4">
@@ -170,7 +225,7 @@ const StudentRegister = () => {
                       id="nome"
                       placeholder="Seu nome completo"
                       value={formData.nome}
-                      onChange={(e) => handleInputChange('nome', e.target.value)}
+                      onChange={(e) => handleInputChange('nome',e.target.value)}
                       maxLength={100} // Limite padrão para nomes
                       required
                     />
@@ -182,11 +237,13 @@ const StudentRegister = () => {
                       <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
                         id="dataNascimento"
-                        type="date"
+                        name="dataNascimento"
+                        type="text"
+                        placeholder="dd/mm/aaaa"
                         value={formData.dataNascimento}
-                        onChange={(e) => handleInputChange('dataNascimento', e.target.value)}
+                        onChange={handleInputChange}
                         className="pl-10"
-                        maxLength={10} // Conforme a tabela VARCHAR(10) - formato YYYY-MM-DD
+                        maxLength={10} // Conforme a tabela VARCHAR(10) - formato DD/MM/AAAA
                         required
                       />
                     </div>
@@ -198,9 +255,10 @@ const StudentRegister = () => {
                     <Label htmlFor="cpf">CPF</Label>
                     <Input
                       id="cpf"
+                      name="cpf"
                       placeholder="000.000.000-00"
                       value={formData.cpf}
-                      onChange={(e) => handleInputChange('cpf', e.target.value)}
+                      onChange={handleInputChange}
                       maxLength={14} // Conforme a tabela VARCHAR(14)
                       required
                     />
@@ -210,9 +268,10 @@ const StudentRegister = () => {
                     <Label htmlFor="rg">RG</Label>
                     <Input
                       id="rg"
+                      name="rg"
                       placeholder="00.000.000-0"
                       value={formData.rg}
-                      onChange={(e) => handleInputChange('rg', e.target.value)}
+                      onChange={handleInputChange}
                       maxLength={12} // Conforme a tabela VARCHAR(12)
                       required
                     />
@@ -231,10 +290,11 @@ const StudentRegister = () => {
                       <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
                         id="email"
+                        name="email"
                         type="email"
                         placeholder="seu@email.com"
                         value={formData.email}
-                        onChange={(e) => handleInputChange('email', e.target.value)}
+                        onChange={handleInputChange}
                         className="pl-10"
                         maxLength={254} // Limite RFC para emails
                         required
@@ -248,9 +308,10 @@ const StudentRegister = () => {
                       <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
                         id="telefone"
+                        name="telefone"
                         placeholder="(11) 99999-9999"
                         value={formData.telefone}
-                        onChange={(e) => handleInputChange('telefone', e.target.value)}
+                        onChange={handleInputChange}
                         className="pl-10"
                         maxLength={20} // Conforme a tabela VARCHAR(20)
                         required
@@ -268,9 +329,10 @@ const StudentRegister = () => {
                   <Label htmlFor="endereco">Endereço Completo</Label>
                   <Input
                     id="endereco"
+                    name="endereco"
                     placeholder="Rua, número, complemento"
                     value={formData.endereco}
-                    onChange={(e) => handleInputChange('endereco', e.target.value)}
+                    onChange={handleInputChange}
                     maxLength={200} // Conforme a tabela VARCHAR(200)
                     required
                   />
@@ -281,9 +343,10 @@ const StudentRegister = () => {
                     <Label htmlFor="cidade">Cidade</Label>
                     <Input
                       id="cidade"
+                      name="cidade"
                       placeholder="Sua cidade"
                       value={formData.cidade}
-                      onChange={(e) => handleInputChange('cidade', e.target.value)}
+                      onChange={handleInputChange}
                       maxLength={100} // Conforme a tabela VARCHAR(100)
                       required
                     />
@@ -293,9 +356,10 @@ const StudentRegister = () => {
                     <Label htmlFor="estado">Estado</Label>
                     <Input
                       id="estado"
+                      name="estado"
                       placeholder="UF"
                       value={formData.estado}
-                      onChange={(e) => handleInputChange('estado', e.target.value)}
+                      onChange={handleInputChange}
                       maxLength={2} // Conforme a tabela VARCHAR(2)
                       required
                     />
@@ -305,9 +369,10 @@ const StudentRegister = () => {
                     <Label htmlFor="cep">CEP</Label>
                     <Input
                       id="cep"
+                      name="cep"
                       placeholder="00000-000"
                       value={formData.cep}
-                      onChange={(e) => handleInputChange('cep', e.target.value)}
+                      onChange={handleInputChange}
                       maxLength={9} // Conforme a tabela VARCHAR(9)
                       required
                     />
@@ -326,10 +391,11 @@ const StudentRegister = () => {
                       <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
                         id="password"
+                        name="password"
                         type={showPassword ? 'text' : 'password'}
                         placeholder="Digite sua senha"
                         value={formData.password}
-                        onChange={(e) => handleInputChange('password', e.target.value)}
+                        onChange={handleInputChange}
                         className="pl-10 pr-10"
                         maxLength={128} // Limite para senhas
                         minLength={8} // Mínimo de segurança
@@ -352,10 +418,11 @@ const StudentRegister = () => {
                       <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
                         id="confirmPassword"
+                        name="confirmPassword"
                         type={showConfirmPassword ? 'text' : 'password'}
                         placeholder="Confirme sua senha"
                         value={formData.confirmPassword}
-                        onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                        onChange={handleInputChange}
                         className="pl-10 pr-10"
                         maxLength={128}
                         required

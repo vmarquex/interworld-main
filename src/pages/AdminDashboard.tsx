@@ -124,7 +124,7 @@ const AdminDashboard = () => {
     
     try {
       // Chamada para a API real na porta 8081
-      const response = await fetch('http://localhost:8081/api/usuarios/todos', {
+      const response = await fetch('http://localhost:8081/api/usuarios', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
