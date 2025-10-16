@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Link } from 'react-router-dom';
 import { 
   Lock, 
   Mail, 
@@ -19,7 +20,8 @@ import {
   Building,
   Globe,
   Phone,
-  MapPin
+  MapPin,
+  ArrowLeft
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { 
@@ -438,7 +440,16 @@ const AdminDashboard = () => {
   // Tela de login do admin
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50 flex items-center justify-center p-4 relative">
+        <div className="absolute top-4 left-4">
+          <Link 
+            to="/" 
+            className="flex items-center space-x-2 text-gray-600 hover:text-red-600 transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span>Voltar ao início</span>
+          </Link>
+        </div>
         <Card className="shadow-2xl border-0 w-full max-w-md">
           <CardHeader className="text-center pb-6">
             <div className="mx-auto w-16 h-16 bg-gradient-to-r from-red-600 to-orange-500 rounded-full flex items-center justify-center mb-4">
