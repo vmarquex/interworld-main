@@ -21,6 +21,7 @@ import QuemSomos from "./pages/QuemSomos";
 import Programas from "./pages/Programas";
 import Dashboard from "./pages/Dashboard";
 import Precos from "./pages/Precos";
+import AdminDashboard from "./pages/AdminDashboard";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,7 @@ const App = () => {
             <Route path="/candidatar-se" element={<CandidatarSe />} />
             <Route path="/sou-escola" element={<SouEscola />} />
             <Route path="/esqueci-senha" element={<EsqueciSenha />} />
+            <Route path="/admin" element={<AdminDashboard />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

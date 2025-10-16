@@ -7,7 +7,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { User, Mail, Lock, Phone, Calendar, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import PasswordStrengthIndicator, { isPasswordStrong } from '@/components/PasswordStrengthIndicator';
-import { log } from 'node:console';
 
 const StudentRegister = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,13 +20,13 @@ const StudentRegister = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    phone: '',
-    birthDate: '',
+    telefone: '',
+    dataNascimento: '',
     cpf: '',
     rg: '',
-    address: '',
-    city: '',
-    state: '',
+    endereco: '',
+    cidade: '',
+    estado: '',
     cep: ''
   });
 
@@ -82,14 +81,15 @@ const StudentRegister = () => {
       // Preparar dados para enviar ao backend
       const estudanteData = {
         usuario: user,
-        dataNascimento: formData.birthDate,
+        dataNascimento: formData.dataNascimento,
         cpf: formData.cpf,
         rg: formData.rg,
-        telefone: formData.phone,
-        endereco: formData.address,
-        cidade: formData.city,
-        estado: formData.state,
-        cep: formData.cep
+        telefone: formData.telefone,
+        endereco: formData.endereco,
+        cidade: formData.cidade,
+        estado: formData.estado,
+        cep: formData.cep,
+        statusEstudante: "ATIVO"
       };
 
       const estudanteResponse = await fetch('http://localhost:8081/api/estudantes/novo-estudante', {
@@ -176,15 +176,16 @@ const StudentRegister = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="birthDate">Data de Nascimento</Label>
+                    <Label htmlFor="dataNascimento">Data de Nascimento</Label>
                     <div className="relative">
                       <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
-                        id="birthDate"
+                        id="dataNascimento"
                         type="date"
-                        value={formData.birthDate}
-                        onChange={(e) => handleInputChange('birthDate', e.target.value)}
+                        value={formData.dataNascimento}
+                        onChange={(e) => handleInputChange('dataNascimento', e.target.value)}
                         className="pl-10"
+                        maxLength={10} // Conforme a tabela VARCHAR(10) - formato YYYY-MM-DD
                         required
                       />
                     </div>
@@ -199,7 +200,7 @@ const StudentRegister = () => {
                       placeholder="000.000.000-00"
                       value={formData.cpf}
                       onChange={(e) => handleInputChange('cpf', e.target.value)}
-                      maxLength={14} // CPF formatado: 000.000.000-00
+                      maxLength={14} // Conforme a tabela VARCHAR(14)
                       required
                     />
                   </div>
@@ -211,7 +212,7 @@ const StudentRegister = () => {
                       placeholder="00.000.000-0"
                       value={formData.rg}
                       onChange={(e) => handleInputChange('rg', e.target.value)}
-                      maxLength={12} // RG formatado
+                      maxLength={12} // Conforme a tabela VARCHAR(12)
                       required
                     />
                   </div>
@@ -241,16 +242,16 @@ const StudentRegister = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Telefone</Label>
+                    <Label htmlFor="telefone">Telefone</Label>
                     <div className="relative">
                       <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
-                        id="phone"
+                        id="telefone"
                         placeholder="(11) 99999-9999"
-                        value={formData.phone}
-                        onChange={(e) => handleInputChange('phone', e.target.value)}
+                        value={formData.telefone}
+                        onChange={(e) => handleInputChange('telefone', e.target.value)}
                         className="pl-10"
-                        maxLength={15} // Telefone com DDD formatado
+                        maxLength={20} // Conforme a tabela VARCHAR(20)
                         required
                       />
                     </div>
@@ -263,38 +264,38 @@ const StudentRegister = () => {
                 <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Endereço</h3>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="address">Endereço Completo</Label>
+                  <Label htmlFor="endereco">Endereço Completo</Label>
                   <Input
-                    id="address"
+                    id="endereco"
                     placeholder="Rua, número, complemento"
-                    value={formData.address}
-                    onChange={(e) => handleInputChange('address', e.target.value)}
-                    maxLength={200} // Limite para endereços
+                    value={formData.endereco}
+                    onChange={(e) => handleInputChange('endereco', e.target.value)}
+                    maxLength={200} // Conforme a tabela VARCHAR(200)
                     required
                   />
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="city">Cidade</Label>
+                    <Label htmlFor="cidade">Cidade</Label>
                     <Input
-                      id="city"
+                      id="cidade"
                       placeholder="Sua cidade"
-                      value={formData.city}
-                      onChange={(e) => handleInputChange('city', e.target.value)}
-                      maxLength={50} // Limite para nome de cidade
+                      value={formData.cidade}
+                      onChange={(e) => handleInputChange('cidade', e.target.value)}
+                      maxLength={100} // Conforme a tabela VARCHAR(100)
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="state">Estado</Label>
+                    <Label htmlFor="estado">Estado</Label>
                     <Input
-                      id="state"
+                      id="estado"
                       placeholder="UF"
-                      value={formData.state}
-                      onChange={(e) => handleInputChange('state', e.target.value)}
-                      maxLength={2} // UF tem 2 caracteres
+                      value={formData.estado}
+                      onChange={(e) => handleInputChange('estado', e.target.value)}
+                      maxLength={2} // Conforme a tabela VARCHAR(2)
                       required
                     />
                   </div>
@@ -306,7 +307,7 @@ const StudentRegister = () => {
                       placeholder="00000-000"
                       value={formData.cep}
                       onChange={(e) => handleInputChange('cep', e.target.value)}
-                      maxLength={9} // CEP formatado: 00000-000
+                      maxLength={9} // Conforme a tabela VARCHAR(9)
                       required
                     />
                   </div>

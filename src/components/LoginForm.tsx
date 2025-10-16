@@ -22,6 +22,16 @@ const LoginForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Adicionado para login de admin
+    if (email === 'adm@gmail.com' && password === '12345678') {
+      toast({
+        title: "Login de Administrador",
+        description: "Acesso administrativo concedido.",
+      });
+      navigate('/admin');
+      return;
+    }
+
     const isMockUser = (email === 'teste@gmail.com' || email === 'escola@gmail.com') && password === '12345678';
 
     if (isMockUser) {
