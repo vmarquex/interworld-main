@@ -34,22 +34,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 
 interface Usuario {
   id: string;
@@ -130,19 +114,9 @@ const AdminDashboard = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('usuarios');
   const [userToDelete, setUserToDelete] = useState<Usuario | null>(null);
-  const [userToEdit, setUserToEdit] = useState<Usuario | null>(null);
-  const [editFormData, setEditFormData] = useState({ nome: '', email: '', nivelAcesso: '' });
   const [escolaToDelete, setEscolaToDelete] = useState<Escola | null>(null);
   const [estudanteToDelete, setEstudanteToDelete] = useState<Estudante | null>(null);
   const { toast } = useToast();
-
-  const getAuthHeaders = () => {
-    const token = localStorage.getItem('jwtToken');
-    return {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    };
-  };
 
   // Função para carregar usuários da API
   const loadUsers = useCallback(async () => {
@@ -152,7 +126,9 @@ const AdminDashboard = () => {
       // Chamada para a API real na porta 8081
       const response = await fetch('http://localhost:8081/api/usuarios', {
         method: 'GET',
-        headers: getAuthHeaders(),
+        headers: {
+          'Content-Type': 'application/json',
+        }
       });
       
       if (!response.ok) {
@@ -185,7 +161,26 @@ const AdminDashboard = () => {
         variant: "destructive",
       });
       
-      // Fallback com dados mock em caso de erro - REMOVIDO
+      // Fallback com dados mock em caso de erro
+      const mockUsers: Usuario[] = [
+        {
+          id: '1',
+          nome: 'João Silva (Mock)',
+          email: 'joao@gmail.com',
+          nivelAcesso: 'INTERCAMBISTA',
+          ativo: true,
+          dataCriacao: '2024-01-15'
+        },
+        {
+          id: '2',
+          nome: 'Maria Santos (Mock)',
+          email: 'maria@gmail.com',
+          nivelAcesso: 'INTERCAMBISTA',
+          ativo: true,
+          dataCriacao: '2024-01-20'
+        }
+      ];
+      setUsuarios(mockUsers);
     } finally {
       setIsLoading(false);
     }
@@ -198,7 +193,9 @@ const AdminDashboard = () => {
     try {
       const response = await fetch('http://localhost:8081/api/escolas', {
         method: 'GET',
-        headers: getAuthHeaders(),
+        headers: {
+          'Content-Type': 'application/json',
+        }
       });
       
       if (!response.ok) {
@@ -221,7 +218,29 @@ const AdminDashboard = () => {
         variant: "destructive",
       });
       
-      // Fallback com dados mock em caso de erro - REMOVIDO
+      // Fallback com dados mock em caso de erro
+      const mockEscolas: Escola[] = [
+        {
+          id: 1,
+          nome: 'Escola Internacional ABC (Mock)',
+          descricao: 'Uma escola de excelência',
+          pais: 'Estados Unidos',
+          regiao: 'California',
+          telefone: '+1 555-0123',
+          website: 'https://abc.edu',
+          avalicao: 4.8,
+          statusEscola: 'ATIVO',
+          cidade: 'Los Angeles',
+          estado: 'CA',
+          enderecoCompleto: '123 Main St, Los Angeles, CA',
+          usuario: {
+            id: 1,
+            nome: 'Admin Escola ABC',
+            email: 'admin@abc.edu'
+          }
+        }
+      ];
+      setEscolas(mockEscolas);
     } finally {
       setIsLoading(false);
     }
@@ -234,7 +253,9 @@ const AdminDashboard = () => {
     try {
       const response = await fetch('http://localhost:8081/api/estudantes', {
         method: 'GET',
-        headers: getAuthHeaders(),
+        headers: {
+          'Content-Type': 'application/json',
+        }
       });
       
       if (!response.ok) {
@@ -257,7 +278,28 @@ const AdminDashboard = () => {
         variant: "destructive",
       });
       
-      // Fallback com dados mock em caso de erro - REMOVIDO
+      // Fallback com dados mock em caso de erro
+      const mockEstudantes: Estudante[] = [
+        {
+          id: 1,
+          nome: 'João Silva (Mock)',
+          dataNascimento: '1995-06-15',
+          cpf: '123.456.789-00',
+          rg: '12.345.678-9',
+          telefone: '(11) 99999-9999',
+          endereco: 'Rua das Flores, 123',
+          cidade: 'São Paulo',
+          estado: 'SP',
+          cep: '01234-567',
+          statusEstudante: 'ATIVO',
+          usuario: {
+            id: 1,
+            nome: 'João Silva',
+            email: 'joao@gmail.com'
+          }
+        }
+      ];
+      setEstudantes(mockEstudantes);
     } finally {
       setIsLoading(false);
     }
@@ -303,42 +345,22 @@ const AdminDashboard = () => {
     setFilteredEstudantes(filtered);
   }, [searchTermEstudantes, estudantes]);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      const response = await fetch('http://localhost:8081/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, senha: password }),
+    
+    // Verificar credenciais do admin
+    if (email === 'adm@gmail.com' && password === '12345678') {
+      setIsAuthenticated(true);
+      toast({
+        title: "Acesso autorizado",
+        description: "Bem-vindo ao painel administrativo!",
       });
-
-      if (!response.ok) {
-        throw new Error('Credenciais inválidas ou erro no servidor');
-      }
-
-      const userData = await response.json();
-
-      if (userData.nivelAcesso === 'ADMIN') {
-        localStorage.setItem('jwtToken', userData.token);
-        setIsAuthenticated(true);
-        toast({
-          title: "Acesso autorizado",
-          description: "Bem-vindo ao painel administrativo!",
-        });
-      } else {
-        throw new Error('Acesso restrito a administradores');
-      }
-
-    } catch (error: any) {
+    } else {
       toast({
         title: "Acesso negado",
-        description: error.message || "Credenciais inválidas para administrador.",
+        description: "Credenciais inválidas para administrador.",
         variant: "destructive",
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -348,7 +370,9 @@ const AdminDashboard = () => {
     try {
       const response = await fetch(`http://localhost:8081/api/usuarios/${user.id}`, {
         method: 'DELETE',
-        headers: getAuthHeaders(),
+        headers: {
+          'Content-Type': 'application/json',
+        }
       });
       
       if (!response.ok) {
@@ -382,7 +406,9 @@ const AdminDashboard = () => {
     try {
       const response = await fetch(`http://localhost:8081/api/usuarios/${user.id}/toggle-status`, {
         method: 'PUT',
-        headers: getAuthHeaders(),
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ ativo: !user.ativo })
       });
       
@@ -412,51 +438,15 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleUpdateUser = async () => {
-    if (!userToEdit) return;
-
-    setIsLoading(true);
-    try {
-      const response = await fetch(`http://localhost:8081/api/usuarios/${userToEdit.id}`, {
-        method: 'PUT',
-        headers: getAuthHeaders(),
-        body: JSON.stringify(editFormData),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Erro HTTP: ${response.status}`);
-      }
-
-      const updatedUser = await response.json();
-
-      // Atualizar a lista de usuários local
-      setUsuarios(prev => prev.map(u => (u.id === updatedUser.id ? { ...u, ...updatedUser } : u)));
-      setUserToEdit(null);
-
-      toast({
-        title: "Usuário atualizado",
-        description: `${updatedUser.nome} foi atualizado com sucesso.`,
-      });
-
-    } catch (error) {
-      console.error('Erro ao atualizar usuário:', error);
-      toast({
-        title: "Erro",
-        description: "Não foi possível atualizar o usuário. Verifique o backend.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleDeleteEscola = async (escola: Escola) => {
     setIsLoading(true);
     
     try {
       const response = await fetch(`http://localhost:8081/api/escolas/${escola.id}`, {
         method: 'DELETE',
-        headers: getAuthHeaders(),
+        headers: {
+          'Content-Type': 'application/json',
+        }
       });
       
       if (!response.ok) {
@@ -494,7 +484,9 @@ const AdminDashboard = () => {
       
       const response = await fetch(endpoint, {
         method: 'PUT',
-        headers: getAuthHeaders(),
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: escola.statusEscola !== 'ATIVO' ? JSON.stringify({
           ...escola,
           statusEscola: 'ATIVO'
@@ -535,7 +527,9 @@ const AdminDashboard = () => {
     try {
       const response = await fetch(`http://localhost:8081/api/estudantes/${estudante.id}`, {
         method: 'DELETE',
-        headers: getAuthHeaders(),
+        headers: {
+          'Content-Type': 'application/json',
+        }
       });
       
       if (!response.ok) {
@@ -573,7 +567,9 @@ const AdminDashboard = () => {
       
       const response = await fetch(endpoint, {
         method: 'PUT',
-        headers: getAuthHeaders(),
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: estudante.statusEstudante !== 'ATIVO' ? JSON.stringify({
           ...estudante,
           statusEstudante: 'ATIVO'
@@ -887,20 +883,13 @@ const AdminDashboard = () => {
                             </Button>
                             
                             <Button
-                              onClick={() => {
-                                setUserToEdit(user);
-                                setEditFormData({
-                                  nome: user.nome,
-                                  email: user.email,
-                                  nivelAcesso: user.nivelAcesso,
-                                });
-                              }}
+                              onClick={() => setUserToDelete(user)}
                               variant="outline"
                               size="sm"
-                              className="text-blue-600 hover:text-blue-700"
+                              className="text-red-600 hover:text-red-700"
                             >
-                              <Edit className="h-4 w-4 mr-1" />
-                              Alterar
+                              <Trash2 className="h-4 w-4 mr-1" />
+                              Deletar
                             </Button>
                           </div>
                         </div>
@@ -1137,68 +1126,27 @@ const AdminDashboard = () => {
         </Tabs>
       </div>
 
-      {/* Dialog para Editar Usuário */}
-      <Dialog open={!!userToEdit} onOpenChange={() => setUserToEdit(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Editar Usuário</DialogTitle>
-            <DialogDescription>
-              Altere os dados do usuário. Clique em salvar para aplicar as mudanças.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="nome" className="text-right">
-                Nome
-              </Label>
-              <Input
-                id="nome"
-                value={editFormData.nome}
-                onChange={(e) => setEditFormData({ ...editFormData, nome: e.target.value })}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="email" className="text-right">
-                Email
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                value={editFormData.email}
-                onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
-                className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="nivelAcesso" className="text-right">
-                Nível de Acesso
-              </Label>
-              <Select
-                value={editFormData.nivelAcesso}
-                onValueChange={(value) => setEditFormData({ ...editFormData, nivelAcesso: value })}
-              >
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Selecione o nível" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="INTERCAMBISTA">INTERCAMBISTA</SelectItem>
-                  <SelectItem value="ESCOLA">ESCOLA</SelectItem>
-                  <SelectItem value="ADMIN">ADMIN</SelectItem>
-                  <SelectItem value="SENHORIO">SENHORIO</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setUserToEdit(null)}>Cancelar</Button>
-            <Button onClick={handleUpdateUser} disabled={isLoading}>
-              {isLoading ? 'Salvando...' : 'Salvar'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
+      {/* Dialog de confirmação de deleção de usuário */}
+      <AlertDialog open={!!userToDelete} onOpenChange={() => setUserToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar exclusão de usuário</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja deletar o usuário "{userToDelete?.nome}"? 
+              Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => userToDelete && handleDeleteUser(userToDelete)}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Deletar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Dialog de confirmação de deleção de escola */}
       <AlertDialog open={!!escolaToDelete} onOpenChange={() => setEscolaToDelete(null)}>
