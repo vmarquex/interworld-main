@@ -50,11 +50,67 @@ const CandidatarSe = () => {
     recomendacao: false
   });
 
+  // Funções de formatação
+  const formatCPF = (value: string) => {
+    const numbers = value.replace(/\D/g, '');
+    return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+  };
+
+  const formatRG = (value: string) => {
+    const numbers = value.replace(/\D/g, '');
+    return numbers.replace(/(\d{2})(\d{3})(\d{3})(\d{1})/, '$1.$2.$3-$4');
+  };
+
+  const formatPhone = (value: string) => {
+    const numbers = value.replace(/\D/g, '');
+    if (numbers.length <= 10) {
+      return numbers.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+    }
+    return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+  };
+
+  const formatCEP = (value: string) => {
+    const numbers = value.replace(/\D/g, '');
+    return numbers.replace(/(\d{5})(\d{3})/, '$1-$2');
+  };
+
+  const formatDate = (value: string) => {
+    const numbers = value.replace(/\D/g, '');
+    return numbers.replace(/(\d{2})(\d{2})(\d{4})/, '$1/$2/$3');
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
+    let formattedValue = value;
+
+    // Aplicar formatação baseada no nome do campo (apenas para inputs de texto)
+    if (type !== 'checkbox' && type !== 'date') {
+      switch (name) {
+        case 'cpf':
+          formattedValue = formatCPF(value);
+          break;
+        case 'rg':
+          formattedValue = formatRG(value);
+          break;
+        case 'telefone':
+          formattedValue = formatPhone(value);
+          break;
+        case 'cep':
+          formattedValue = formatCEP(value);
+          break;
+        case 'dataNascimento':
+          if (type === 'text') {
+            formattedValue = formatDate(value);
+          }
+          break;
+        default:
+          formattedValue = value;
+      }
+    }
+
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
+      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : formattedValue
     }));
   };
 
@@ -133,9 +189,11 @@ const CandidatarSe = () => {
                 <Input
                   id="dataNascimento"
                   name="dataNascimento"
-                  type="date"
+                  type="text"
+                  placeholder="dd/mm/aaaa"
                   value={formData.dataNascimento}
                   onChange={handleInputChange}
+                  maxLength={10}
                   required
                 />
               </div>

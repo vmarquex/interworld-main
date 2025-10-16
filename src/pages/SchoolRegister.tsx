@@ -38,6 +38,50 @@ const SchoolRegister = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Funções de formatação
+  const formatPhone = (value: string) => {
+    const numbers = value.replace(/\D/g, '');
+    if (numbers.length <= 10) {
+      return numbers.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+    }
+    return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+  };
+
+  const formatCEP = (value: string) => {
+    const numbers = value.replace(/\D/g, '');
+    return numbers.replace(/(\d{5})(\d{3})/, '$1-$2');
+  };
+
+  const formatCNPJ = (value: string) => {
+    const numbers = value.replace(/\D/g, '');
+    return numbers.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    let formattedValue = value;
+
+    // Aplicar formatação baseada no nome do campo
+    switch (name) {
+      case 'telefone':
+        formattedValue = formatPhone(value);
+        break;
+      case 'codigoPostal':
+        formattedValue = formatCEP(value);
+        break;
+      case 'indentificacaoEscola':
+        formattedValue = formatCNPJ(value);
+        break;
+      default:
+        formattedValue = value;
+    }
+
+    setFormData(prev => ({
+      ...prev,
+      [name]: formattedValue
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -142,9 +186,6 @@ const SchoolRegister = () => {
 
 
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 py-8 px-4">
@@ -182,9 +223,10 @@ const SchoolRegister = () => {
                   <Label htmlFor="nome">Nome da Instituição</Label>
                   <Input
                     id="nome"
+                    name="nome"
                     placeholder="Nome completo da instituição"
                     value={formData.nome}
-                    onChange={(e) => handleInputChange('nome', e.target.value)}
+                    onChange={handleInputChange}
                     required
                   />
                 </div>
@@ -194,9 +236,10 @@ const SchoolRegister = () => {
                     <Label htmlFor="indentificacaoEscola">CNPJ</Label>
                     <Input
                       id="indentificacaoEscola"
+                      name="indentificacaoEscola"
                       placeholder="00.000.000/0000-00"
                       value={formData.indentificacaoEscola}
-                      onChange={(e) => handleInputChange('indentificacaoEscola', e.target.value)}
+                      onChange={handleInputChange}
                       required
                     />
                   </div>
@@ -207,9 +250,10 @@ const SchoolRegister = () => {
                       <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
                         id="website"
+                        name="website"
                         placeholder="www.instituicao.com"
                         value={formData.website}
-                        onChange={(e) => handleInputChange('website', e.target.value)}
+                        onChange={handleInputChange}
                         className="pl-10"
                       />
                     </div>
@@ -220,9 +264,10 @@ const SchoolRegister = () => {
                   <Label htmlFor="descricao">Descrição</Label>
                   <textarea
                     id="descricao"
+                    name="descricao"
                     placeholder="Descreva sua instituição e os programas oferecidos"
                     value={formData.descricao}
-                    onChange={(e) => handleInputChange('descricao', e.target.value)}
+                    onChange={handleInputChange}
                     className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     rows={4}
                   />
@@ -240,10 +285,11 @@ const SchoolRegister = () => {
                       <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
                         id="email"
+                        name="email"
                         type="email"
                         placeholder="contato@instituicao.com"
                         value={formData.email}
-                        onChange={(e) => handleInputChange('email', e.target.value)}
+                        onChange={handleInputChange}
                         className="pl-10"
                         required
                       />
@@ -256,9 +302,10 @@ const SchoolRegister = () => {
                       <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
                         id="telefone"
+                        name="telefone"
                         placeholder="(11) 99999-9999"
                         value={formData.telefone}
-                        onChange={(e) => handleInputChange('telefone', e.target.value)}
+                        onChange={handleInputChange}
                         className="pl-10"
                         required
                       />
@@ -277,9 +324,10 @@ const SchoolRegister = () => {
                     <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input
                       id="enderecoCompleto"
+                      name="enderecoCompleto"
                       placeholder="Rua, número, complemento"
                       value={formData.enderecoCompleto}
-                      onChange={(e) => handleInputChange('enderecoCompleto', e.target.value)}
+                      onChange={handleInputChange}
                       className="pl-10"
                       required
                     />
@@ -291,9 +339,10 @@ const SchoolRegister = () => {
                     <Label htmlFor="cidade">Cidade</Label>
                     <Input
                       id="cidade"
+                      name="cidade"
                       placeholder="cidade"
                       value={formData.cidade}
-                      onChange={(e) => handleInputChange('cidade', e.target.value)}
+                      onChange={handleInputChange}
                       required
                     />
                   </div>
@@ -302,9 +351,10 @@ const SchoolRegister = () => {
                     <Label htmlFor="estado">Estado/Província</Label>
                     <Input
                       id="estado"
+                      name="estado"
                       placeholder="Estado ou Província"
                       value={formData.estado}
-                      onChange={(e) => handleInputChange('estado', e.target.value)}
+                      onChange={handleInputChange}
                       required
                     />
                   </div>
@@ -315,9 +365,10 @@ const SchoolRegister = () => {
                     <Label htmlFor="pais">País</Label>
                     <Input
                       id="pais"
+                      name="pais"
                       placeholder="País"
                       value={formData.pais}
-                      onChange={(e) => handleInputChange('pais', e.target.value)}
+                      onChange={handleInputChange}
                       required
                     />
                   </div>
@@ -326,9 +377,10 @@ const SchoolRegister = () => {
                     <Label htmlFor="codigoPostal">CEP/Código Postal</Label>
                     <Input
                       id="codigoPostal"
+                      name="codigoPostal"
                       placeholder="Ex: 00000-000 ou 12345, SW1A 1AA"
                       value={formData.codigoPostal}
-                      onChange={(e) => handleInputChange('codigoPostal', e.target.value)}
+                      onChange={handleInputChange}
                       required
                     />
                   </div>
@@ -346,10 +398,11 @@ const SchoolRegister = () => {
                       <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
                         id="password"
+                        name="password"
                         type={showPassword ? 'text' : 'password'}
                         placeholder="Digite sua senha"
                         value={formData.password}
-                        onChange={(e) => handleInputChange('password', e.target.value)}
+                        onChange={handleInputChange}
                         className="pl-10 pr-10"
                         required
                       />
@@ -369,10 +422,11 @@ const SchoolRegister = () => {
                       <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
                         id="confirmPassword"
+                        name="confirmPassword"
                         type={showConfirmPassword ? 'text' : 'password'}
                         placeholder="Confirme sua senha"
                         value={formData.confirmPassword}
-                        onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                        onChange={handleInputChange}
                         className="pl-10 pr-10"
                         required
                       />
