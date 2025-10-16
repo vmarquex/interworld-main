@@ -34,6 +34,22 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { 
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from '@/components/ui/dialog';
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface Usuario {
   id: string;
@@ -53,6 +69,13 @@ interface UsuarioAPI {
   ativo?: boolean;
   dataCriacao?: string;
   createdAt?: string;
+  statusUsuario?: string; // Adicionado para consistência com o backend
+}
+
+interface UsuarioDTO {
+  nome: string;
+  email: string;
+  nivelAcesso: string;
 }
 
 interface Escola {
@@ -113,7 +136,8 @@ const AdminDashboard = () => {
   const [searchTermEstudantes, setSearchTermEstudantes] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('usuarios');
-  const [userToDelete, setUserToDelete] = useState<Usuario | null>(null);
+  const [userToEdit, setUserToEdit] = useState<Usuario | null>(null);
+  const [editFormData, setEditFormData] = useState<UsuarioDTO>({ nome: '', email: '', nivelAcesso: '' });
   const [escolaToDelete, setEscolaToDelete] = useState<Escola | null>(null);
   const [estudanteToDelete, setEstudanteToDelete] = useState<Estudante | null>(null);
   const { toast } = useToast();
@@ -128,6 +152,8 @@ const AdminDashboard = () => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          // TODO: Adicionar token de autenticação para evitar erro 403
+          // 'Authorization': `Bearer ${seu_token_aqui}`,
         }
       });
       
@@ -143,7 +169,7 @@ const AdminDashboard = () => {
         nome: user.nome,
         email: user.email,
         nivelAcesso: user.nivelAcesso || 'INTERCAMBISTA',
-        ativo: user.ativo !== undefined ? user.ativo : true,
+        ativo: user.ativo !== undefined ? user.ativo : (user.statusUsuario === 'ATIVO'),
         dataCriacao: user.dataCriacao || user.createdAt || new Date().toISOString()
       }));
       
@@ -157,30 +183,10 @@ const AdminDashboard = () => {
       console.error('Erro ao carregar usuários:', error);
       toast({
         title: "Erro",
-        description: "Erro ao carregar lista de usuários. Verifique se o backend está rodando na porta 8081.",
+        description: "Erro ao carregar lista de usuários. Verifique se o backend está rodando na porta 8081 e se a autenticação está correta.",
         variant: "destructive",
       });
       
-      // Fallback com dados mock em caso de erro
-      const mockUsers: Usuario[] = [
-        {
-          id: '1',
-          nome: 'João Silva (Mock)',
-          email: 'joao@gmail.com',
-          nivelAcesso: 'INTERCAMBISTA',
-          ativo: true,
-          dataCriacao: '2024-01-15'
-        },
-        {
-          id: '2',
-          nome: 'Maria Santos (Mock)',
-          email: 'maria@gmail.com',
-          nivelAcesso: 'INTERCAMBISTA',
-          ativo: true,
-          dataCriacao: '2024-01-20'
-        }
-      ];
-      setUsuarios(mockUsers);
     } finally {
       setIsLoading(false);
     }
@@ -195,6 +201,8 @@ const AdminDashboard = () => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          // TODO: Adicionar token de autenticação para evitar erro 403
+          // 'Authorization': `Bearer ${seu_token_aqui}`,
         }
       });
       
@@ -255,6 +263,8 @@ const AdminDashboard = () => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          // TODO: Adicionar token de autenticação para evitar erro 403
+          // 'Authorization': `Bearer ${seu_token_aqui}`,
         }
       });
       
@@ -345,6 +355,56 @@ const AdminDashboard = () => {
     setFilteredEstudantes(filtered);
   }, [searchTermEstudantes, estudantes]);
 
+  const handleOpenEditModal = (user: Usuario) => {
+    setUserToEdit(user);
+    setEditFormData({
+      nome: user.nome,
+      email: user.email,
+      nivelAcesso: user.nivelAcesso,
+    });
+  };
+
+  const handleUpdateUser = async () => {
+    if (!userToEdit) return;
+
+    setIsLoading(true);
+    try {
+      const response = await fetch(`http://localhost:8081/api/usuarios/${userToEdit.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          // TODO: Adicionar token de autenticação para evitar erro 403
+          // 'Authorization': `Bearer ${seu_token_aqui}`,
+        },
+        body: JSON.stringify(editFormData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erro HTTP: ${response.status}`);
+      }
+
+      const updatedUser = await response.json();
+
+      setUsuarios(prev => prev.map(u => (u.id === userToEdit.id ? { ...u, ...updatedUser } : u)));
+      setUserToEdit(null);
+
+      toast({
+        title: "Usuário atualizado",
+        description: `Os dados de ${updatedUser.nome} foram atualizados.`,
+      });
+
+    } catch (error) {
+      console.error('Erro ao atualizar usuário:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível atualizar o usuário.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -364,42 +424,6 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleDeleteUser = async (user: Usuario) => {
-    setIsLoading(true);
-    
-    try {
-      const response = await fetch(`http://localhost:8081/api/usuarios/${user.id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Erro HTTP: ${response.status}`);
-      }
-      
-      // Remover o usuário da lista local
-      setUsuarios(prev => prev.filter(u => u.id !== user.id));
-      setUserToDelete(null);
-      
-      toast({
-        title: "Usuário removido",
-        description: `${user.nome} foi removido do sistema.`,
-      });
-      
-    } catch (error) {
-      console.error('Erro ao deletar usuário:', error);
-      toast({
-        title: "Erro",
-        description: "Erro ao remover usuário. Verifique se o backend está funcionando.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const toggleUserStatus = async (user: Usuario) => {
     setIsLoading(true);
     
@@ -408,6 +432,8 @@ const AdminDashboard = () => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          // TODO: Adicionar token de autenticação para evitar erro 403
+          // 'Authorization': `Bearer ${seu_token_aqui}`,
         },
         body: JSON.stringify({ ativo: !user.ativo })
       });
@@ -446,6 +472,8 @@ const AdminDashboard = () => {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
+          // TODO: Adicionar token de autenticação para evitar erro 403
+          // 'Authorization': `Bearer ${seu_token_aqui}`,
         }
       });
       
@@ -486,6 +514,8 @@ const AdminDashboard = () => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          // TODO: Adicionar token de autenticação para evitar erro 403
+          // 'Authorization': `Bearer ${seu_token_aqui}`,
         },
         body: escola.statusEscola !== 'ATIVO' ? JSON.stringify({
           ...escola,
@@ -529,6 +559,8 @@ const AdminDashboard = () => {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
+          // TODO: Adicionar token de autenticação para evitar erro 403
+          // 'Authorization': `Bearer ${seu_token_aqui}`,
         }
       });
       
@@ -569,6 +601,8 @@ const AdminDashboard = () => {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          // TODO: Adicionar token de autenticação para evitar erro 403
+          // 'Authorization': `Bearer ${seu_token_aqui}`,
         },
         body: estudante.statusEstudante !== 'ATIVO' ? JSON.stringify({
           ...estudante,
@@ -873,23 +907,22 @@ const AdminDashboard = () => {
                           
                           <div className="flex items-center space-x-2">
                             <Button
+                              onClick={() => handleOpenEditModal(user)}
+                              variant="outline"
+                              size="sm"
+                            >
+                              <Edit className="h-4 w-4 mr-1" />
+                              Alterar
+                            </Button>
+
+                            <Button
                               onClick={() => toggleUserStatus(user)}
                               variant="outline"
                               size="sm"
                               className={user.ativo ? 'text-orange-600 hover:text-orange-700' : 'text-green-600 hover:text-green-700'}
                             >
-                              <Edit className="h-4 w-4 mr-1" />
+                              <Shield className="h-4 w-4 mr-1" />
                               {user.ativo ? 'Inativar' : 'Ativar'}
-                            </Button>
-                            
-                            <Button
-                              onClick={() => setUserToDelete(user)}
-                              variant="outline"
-                              size="sm"
-                              className="text-red-600 hover:text-red-700"
-                            >
-                              <Trash2 className="h-4 w-4 mr-1" />
-                              Deletar
                             </Button>
                           </div>
                         </div>
@@ -1126,27 +1159,71 @@ const AdminDashboard = () => {
         </Tabs>
       </div>
 
-      {/* Dialog de confirmação de deleção de usuário */}
-      <AlertDialog open={!!userToDelete} onOpenChange={() => setUserToDelete(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Confirmar exclusão de usuário</AlertDialogTitle>
-            <AlertDialogDescription>
-              Tem certeza que deseja deletar o usuário "{userToDelete?.nome}"? 
-              Esta ação não pode ser desfeita.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => userToDelete && handleDeleteUser(userToDelete)}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              Deletar
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {/* Dialog de Edição de Usuário */}
+      <Dialog open={!!userToEdit} onOpenChange={() => setUserToEdit(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Editar Usuário</DialogTitle>
+            <DialogDescription>
+              Altere os dados do usuário abaixo. Clique em salvar para aplicar as mudanças.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="name" className="text-right">
+                Nome
+              </Label>
+              <Input
+                id="name"
+                value={editFormData.nome}
+                onChange={(e) => setEditFormData({ ...editFormData, nome: e.target.value })}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="email" className="text-right">
+                Email
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                value={editFormData.email}
+                onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="nivelAcesso" className="text-right">
+                Nível
+              </Label>
+              <Select
+                value={editFormData.nivelAcesso}
+                onValueChange={(value) => setEditFormData({ ...editFormData, nivelAcesso: value })}
+              >
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Selecione o nível de acesso" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="INTERCAMBISTA">INTERCAMBISTA</SelectItem>
+                  <SelectItem value="ESCOLA">ESCOLA</SelectItem>
+                  <SelectItem value="SENHORIO">SENHORIO</SelectItem>
+                  <SelectItem value="ADMIN">ADMIN</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="secondary">
+                Cancelar
+              </Button>
+            </DialogClose>
+            <Button type="button" onClick={handleUpdateUser} disabled={isLoading}>
+              {isLoading ? 'Salvando...' : 'Salvar Alterações'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Dialog de confirmação de deleção de escola */}
       <AlertDialog open={!!escolaToDelete} onOpenChange={() => setEscolaToDelete(null)}>
