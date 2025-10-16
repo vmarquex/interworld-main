@@ -15,7 +15,7 @@ CREATE TABLE Usuario
    nome          VARCHAR(100)   NOT NULL,
    email         VARCHAR(100)   UNIQUE NOT NULL,
    senha         VARCHAR(100)   NOT NULL,
-   nivelAcesso   VARCHAR(10)    NULL, -- ADMIN ou INTERCAMBISTA ou ESCOLA ou SENHORIO
+   nivelAcesso   VARCHAR(20)    NULL, -- ADMIN ou INTERCAMBISTA ou ESCOLA ou SENHORIO
    foto          VARBINARY(MAX) NULL,
    dataCadastro  SMALLDATETIME  NOT NULL,
    statusUsuario VARCHAR(20)    NOT NULL, -- ATIVO ou INATIVO ou TROCAR_SENHA
@@ -37,6 +37,7 @@ CREATE TABLE Escola
     id           INT            IDENTITY,
     nome         VARCHAR(100)   NOT NULL,
     descricao    VARCHAR(400)   NOT NULL,
+	infoEscola   VARCHAR(400)   	NULL,
     pais         VARCHAR(50)    NOT NULL,
     regiao       VARCHAR(50)    NOT NULL,
     telefone     VARCHAR(20)    NOT NULL,
@@ -45,6 +46,11 @@ CREATE TABLE Escola
     avalicao     DECIMAL(3,1)       NULL,
     usuario_id   INT            NOT NULL,
     statusEscola VARCHAR(10)    NOT NULL, -- ATIVO ou INATIVO
+	identificacaoEscola VARCHAR(30) NULL,
+	codigoPostal        VARCHAR(20) NULL,
+	estado VARCHAR(50) NULL,
+	cidade VARCHAR(50) NULL,
+	enderecoCompleto     VARCHAR(300) NOT NULL,
  
     PRIMARY KEY (id),
     FOREIGN KEY (usuario_id) REFERENCES Usuario (id)
@@ -105,7 +111,7 @@ CREATE TABLE Estudante
     PRIMARY KEY (id),
     FOREIGN KEY (usuario_id) REFERENCES Usuario (id)
 );
-
+/*
 CREATE TABLE CadastroEscola
 (
     id               INT IDENTITY PRIMARY KEY,
@@ -142,7 +148,7 @@ CREATE TABLE CadastroCasa
 
     FOREIGN KEY (usuario_id) REFERENCES Usuario (id)
 );
-
+*/
 CREATE TABLE Mensagem
 (
     id              INT             IDENTITY,
@@ -163,3 +169,5 @@ CREATE TABLE Mensagem
  
 SELECT * FROM Usuario
 SELECT * FROM Mensagem
+SELECT * FROM Estudante
+SELECT * FROM Escola

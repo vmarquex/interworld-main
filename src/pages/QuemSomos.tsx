@@ -80,13 +80,13 @@ const QuemSomos = () => {
               <div>
                 <h2 className="text-3xl font-bold text-gray-900 mb-6">Nossa História</h2>
                 <p className="text-gray-600 mb-4">
-                  A InterWorld nasceu em 2015 com o sonho de democratizar o acesso à educação internacional para estudantes brasileiros. Fundada por ex-intercambistas que vivenciaram na pele os desafios e as transformações que uma experiência internacional pode proporcionar.
+                  O grupo InterWorld nasceu em 2023 com o propósito de democratizar o acesso à educação internacional para estudantes brasileiros. Inspirados pela crescente demanda por programas de intercâmbio e pela importância da imersão cultural no desenvolvimento acadêmico e profissional, nossa equipe é composta por jovens que acreditam no poder transformador das experiências internacionais.
                 </p>
                 <p className="text-gray-600 mb-4">
-                  Desde então, já ajudamos mais de 10.000 estudantes a realizarem seus sonhos de estudar no exterior, construindo pontes entre o Brasil e as melhores instituições educacionais do mundo.
+                  Desde nossa fundação, temos trabalhado para oferecer aos estudantes as ferramentas e o suporte necessários para realizarem seus sonhos de estudar no exterior. Acreditamos que o intercâmbio não é apenas uma oportunidade de aprendizado de novos idiomas, mas também uma forma de ampliar horizontes, vivenciar diferentes culturas e adquirir competências essenciais para um mundo globalizado.
                 </p>
                 <p className="text-gray-600">
-                  Nossa missão vai além de simplesmente facilitar intercâmbios - queremos formar cidadãos globais capazes de fazer a diferença em suas comunidades e no mundo.
+                  Nosso objetivo é facilitar o acesso a programas de intercâmbio acadêmico e cultural, conectando estudantes brasileiros com as melhores oportunidades educacionais ao redor do mundo. Queremos promover uma educação de qualidade e contribuir para a formação de cidadãos globais, preparados para fazer a diferença em suas comunidades e no cenário internacional.
                 </p>
               </div>
               <div className="bg-gradient-to-br from-blue-50 via-white to-blue-100 rounded-2xl p-8">

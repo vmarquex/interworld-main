@@ -4,35 +4,143 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Building, Mail, Lock, Phone, MapPin, ArrowLeft, Eye, EyeOff, Globe } from 'lucide-react';
+import PasswordStrengthIndicator, { isPasswordStrong } from '@/components/PasswordStrengthIndicator';
+import { useToast } from '@/hooks/use-toast';
+
 
 const SchoolRegister = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
-    institutionName: '',
-    cnpj: '',
+    usuario: '',
+    nome: '',
     email: '',
+    descricao: '',
+    infoEscola: '',
+    pais: '',
+    regiao: '',
+    telefone: '',
+    website: '',
+    foto: '',
+    avalicao: '',
+    indentificacaoEscola: '',
     password: '',
     confirmPassword: '',
-    phone: '',
-    website: '',
-    responsibleName: '',
-    responsiblePosition: '',
-    address: '',
-    city: '',
-    state: '',
-    country: '',
-    cep: '',
-    description: ''
+    codigoPostal: '',
+    estado: '',
+    cidade: '',
+    enderecoCompleto: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Cadastro de escola:', formData);
-    // Aqui seria a lógica de cadastro
+
+    // Validação das senhas
+    if (formData.password !== formData.confirmPassword) {
+      toast({
+        title: "Erro",
+        description: "As senhas não coincidem",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validação de senha forte
+    if (!isPasswordStrong(formData.password)) {
+      toast({
+        title: "Senha muito fraca",
+        description: "Sua senha deve atender a todos os requisitos de segurança.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      // Criar o usuário
+      const userData = {
+        nome: formData.nome,
+        email: formData.email,
+        senha: formData.password,
+      };
+
+      const userResponse = await fetch('http://localhost:8081/api/usuarios/novo-escola', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (userResponse.status !== 201) {
+        const error = await userResponse.json().catch(() => null);
+        console.error('Erro ao criar usuário:', error);
+        throw new Error('Erro ao criar usuário');
+      }
+
+      const user = await userResponse.json();
+
+      // Criar a escola
+      const escolaData = {
+        usuario: user,
+        nome: formData.nome,
+        descricao: formData.descricao,
+        infoEscola: formData.infoEscola,
+        pais: formData.pais,
+        regiao: formData.regiao,
+        telefone: formData.telefone,
+        website: formData.website,
+        foto: formData.foto,
+        avalicao: formData.avalicao,
+        indentificacaoEscola: formData.indentificacaoEscola,
+        codigoPostal: formData.codigoPostal,
+        estado: formData.estado,
+        cidade: formData.cidade,
+        enderecoCompleto: formData.enderecoCompleto,
+      };
+
+      const escolaResponse = await fetch('http://localhost:8081/api/escolas/novo-escola', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(escolaData),
+      });
+
+      if (escolaResponse.status === 201) {
+        toast({
+          title: "Sucesso!",
+          description: "Cadastro realizado com sucesso!",
+        });
+
+        setTimeout(() => {
+          navigate('/login');
+        }, 2000);
+      } else {
+        const error = await escolaResponse.json().catch(() => null);
+        console.error('Erro ao cadastrar escola:', error);
+        throw new Error('Erro ao cadastrar escola');
+      }
+    } catch (error) {
+      console.error('Erro ao cadastrar:', error);
+      toast({
+        title: "Erro",
+        description: "Erro ao realizar cadastro. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -41,8 +149,8 @@ const SchoolRegister = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 py-8 px-4">
       <div className="absolute top-4 left-4">
-        <Link 
-          to="/" 
+        <Link
+          to="/"
           className="flex items-center space-x-2 text-gray-600 hover:text-green-600 transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -69,26 +177,26 @@ const SchoolRegister = () => {
               {/* Dados da Instituição */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Dados da Instituição</h3>
-                
+
                 <div className="space-y-2">
-                  <Label htmlFor="institutionName">Nome da Instituição</Label>
+                  <Label htmlFor="nome">Nome da Instituição</Label>
                   <Input
-                    id="institutionName"
+                    id="nome"
                     placeholder="Nome completo da instituição"
-                    value={formData.institutionName}
-                    onChange={(e) => handleInputChange('institutionName', e.target.value)}
+                    value={formData.nome}
+                    onChange={(e) => handleInputChange('nome', e.target.value)}
                     required
                   />
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="cnpj">CNPJ</Label>
+                    <Label htmlFor="indentificacaoEscola">CNPJ</Label>
                     <Input
-                      id="cnpj"
+                      id="indentificacaoEscola"
                       placeholder="00.000.000/0000-00"
-                      value={formData.cnpj}
-                      onChange={(e) => handleInputChange('cnpj', e.target.value)}
+                      value={formData.indentificacaoEscola}
+                      onChange={(e) => handleInputChange('indentificacaoEscola', e.target.value)}
                       required
                     />
                   </div>
@@ -109,51 +217,22 @@ const SchoolRegister = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="description">Descrição</Label>
+                  <Label htmlFor="descricao">Descrição</Label>
                   <textarea
-                    id="description"
+                    id="descricao"
                     placeholder="Descreva sua instituição e os programas oferecidos"
-                    value={formData.description}
-                    onChange={(e) => handleInputChange('description', e.target.value)}
+                    value={formData.descricao}
+                    onChange={(e) => handleInputChange('descricao', e.target.value)}
                     className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     rows={4}
                   />
                 </div>
               </div>
 
-              {/* Responsável */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Responsável pelo Cadastro</h3>
-                
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="responsibleName">Nome do Responsável</Label>
-                    <Input
-                      id="responsibleName"
-                      placeholder="Nome completo"
-                      value={formData.responsibleName}
-                      onChange={(e) => handleInputChange('responsibleName', e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="responsiblePosition">Cargo/Posição</Label>
-                    <Input
-                      id="responsiblePosition"
-                      placeholder="Ex: Diretor, Coordenador"
-                      value={formData.responsiblePosition}
-                      onChange={(e) => handleInputChange('responsiblePosition', e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-
               {/* Contato */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Contato</h3>
-                
+
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="email">Email Institucional</Label>
@@ -172,14 +251,14 @@ const SchoolRegister = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Telefone</Label>
+                    <Label htmlFor="telefone">Telefone</Label>
                     <div className="relative">
                       <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                       <Input
-                        id="phone"
+                        id="telefone"
                         placeholder="(11) 99999-9999"
-                        value={formData.phone}
-                        onChange={(e) => handleInputChange('phone', e.target.value)}
+                        value={formData.telefone}
+                        onChange={(e) => handleInputChange('telefone', e.target.value)}
                         className="pl-10"
                         required
                       />
@@ -191,16 +270,16 @@ const SchoolRegister = () => {
               {/* Endereço */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Localização</h3>
-                
+
                 <div className="space-y-2">
-                  <Label htmlFor="address">Endereço Completo</Label>
+                  <Label htmlFor="enderecoCompleto">Endereço Completo</Label>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <Input
-                      id="address"
+                      id="enderecoCompleto"
                       placeholder="Rua, número, complemento"
-                      value={formData.address}
-                      onChange={(e) => handleInputChange('address', e.target.value)}
+                      value={formData.enderecoCompleto}
+                      onChange={(e) => handleInputChange('enderecoCompleto', e.target.value)}
                       className="pl-10"
                       required
                     />
@@ -209,23 +288,23 @@ const SchoolRegister = () => {
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="city">Cidade</Label>
+                    <Label htmlFor="cidade">Cidade</Label>
                     <Input
-                      id="city"
-                      placeholder="Cidade"
-                      value={formData.city}
-                      onChange={(e) => handleInputChange('city', e.target.value)}
+                      id="cidade"
+                      placeholder="cidade"
+                      value={formData.cidade}
+                      onChange={(e) => handleInputChange('cidade', e.target.value)}
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="state">Estado/Província</Label>
+                    <Label htmlFor="estado">Estado/Província</Label>
                     <Input
-                      id="state"
+                      id="estado"
                       placeholder="Estado ou Província"
-                      value={formData.state}
-                      onChange={(e) => handleInputChange('state', e.target.value)}
+                      value={formData.estado}
+                      onChange={(e) => handleInputChange('estado', e.target.value)}
                       required
                     />
                   </div>
@@ -233,23 +312,23 @@ const SchoolRegister = () => {
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="country">País</Label>
+                    <Label htmlFor="pais">País</Label>
                     <Input
-                      id="country"
+                      id="pais"
                       placeholder="País"
-                      value={formData.country}
-                      onChange={(e) => handleInputChange('country', e.target.value)}
+                      value={formData.pais}
+                      onChange={(e) => handleInputChange('pais', e.target.value)}
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="cep">CEP/Código Postal</Label>
+                    <Label htmlFor="codigoPostal">CEP/Código Postal</Label>
                     <Input
-                      id="cep"
-                      placeholder="00000-000"
-                      value={formData.cep}
-                      onChange={(e) => handleInputChange('cep', e.target.value)}
+                      id="codigoPostal"
+                      placeholder="Ex: 00000-000 ou 12345, SW1A 1AA"
+                      value={formData.codigoPostal}
+                      onChange={(e) => handleInputChange('codigoPostal', e.target.value)}
                       required
                     />
                   </div>
@@ -259,7 +338,7 @@ const SchoolRegister = () => {
               {/* Senha */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Acesso</h3>
-                
+
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="password">Senha</Label>
