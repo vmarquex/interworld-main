@@ -158,6 +158,8 @@ const SchoolRegister = () => {
         body: JSON.stringify(escolaData),
       });
 
+      console.log('Resposta da API de escolas:', escolaResponse);
+
       if (escolaResponse.status === 201) {
         toast({
           title: "Sucesso!",
