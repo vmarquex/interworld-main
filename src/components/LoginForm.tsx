@@ -103,6 +103,11 @@ const LoginForm = () => {
           }));
           localStorage.setItem('isLoggedIn', 'true');
 
+          // Salvar o token JWT retornado pela API
+          if (userData.token) {
+            localStorage.setItem('authToken', userData.token);
+          }
+
           toast({
             title: "Login realizado com sucesso!",
             description: `Bem-vindo${userType === 'student' ? '' : userType === 'school' ? 'a' : ''} ao InterWorld`,

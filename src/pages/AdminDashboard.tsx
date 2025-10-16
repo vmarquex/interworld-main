@@ -142,6 +142,14 @@ const AdminDashboard = () => {
   const [estudanteToDelete, setEstudanteToDelete] = useState<Estudante | null>(null);
   const { toast } = useToast();
 
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem('authToken');
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    };
+  };
+
   // Função para carregar usuários da API
   const loadUsers = useCallback(async () => {
     setIsLoading(true);
@@ -150,11 +158,7 @@ const AdminDashboard = () => {
       // Chamada para a API real na porta 8081
       const response = await fetch('http://localhost:8081/api/usuarios', {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          // TODO: Adicionar token de autenticação para evitar erro 403
-          // 'Authorization': `Bearer ${seu_token_aqui}`,
-        }
+        headers: getAuthHeaders()
       });
       
       if (!response.ok) {
@@ -199,11 +203,7 @@ const AdminDashboard = () => {
     try {
       const response = await fetch('http://localhost:8081/api/escolas', {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          // TODO: Adicionar token de autenticação para evitar erro 403
-          // 'Authorization': `Bearer ${seu_token_aqui}`,
-        }
+        headers: getAuthHeaders()
       });
       
       if (!response.ok) {
@@ -226,29 +226,6 @@ const AdminDashboard = () => {
         variant: "destructive",
       });
       
-      // Fallback com dados mock em caso de erro
-      const mockEscolas: Escola[] = [
-        {
-          id: 1,
-          nome: 'Escola Internacional ABC (Mock)',
-          descricao: 'Uma escola de excelência',
-          pais: 'Estados Unidos',
-          regiao: 'California',
-          telefone: '+1 555-0123',
-          website: 'https://abc.edu',
-          avalicao: 4.8,
-          statusEscola: 'ATIVO',
-          cidade: 'Los Angeles',
-          estado: 'CA',
-          enderecoCompleto: '123 Main St, Los Angeles, CA',
-          usuario: {
-            id: 1,
-            nome: 'Admin Escola ABC',
-            email: 'admin@abc.edu'
-          }
-        }
-      ];
-      setEscolas(mockEscolas);
     } finally {
       setIsLoading(false);
     }
@@ -261,11 +238,7 @@ const AdminDashboard = () => {
     try {
       const response = await fetch('http://localhost:8081/api/estudantes', {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          // TODO: Adicionar token de autenticação para evitar erro 403
-          // 'Authorization': `Bearer ${seu_token_aqui}`,
-        }
+        headers: getAuthHeaders()
       });
       
       if (!response.ok) {
@@ -288,28 +261,6 @@ const AdminDashboard = () => {
         variant: "destructive",
       });
       
-      // Fallback com dados mock em caso de erro
-      const mockEstudantes: Estudante[] = [
-        {
-          id: 1,
-          nome: 'João Silva (Mock)',
-          dataNascimento: '1995-06-15',
-          cpf: '123.456.789-00',
-          rg: '12.345.678-9',
-          telefone: '(11) 99999-9999',
-          endereco: 'Rua das Flores, 123',
-          cidade: 'São Paulo',
-          estado: 'SP',
-          cep: '01234-567',
-          statusEstudante: 'ATIVO',
-          usuario: {
-            id: 1,
-            nome: 'João Silva',
-            email: 'joao@gmail.com'
-          }
-        }
-      ];
-      setEstudantes(mockEstudantes);
     } finally {
       setIsLoading(false);
     }
@@ -371,11 +322,7 @@ const AdminDashboard = () => {
     try {
       const response = await fetch(`http://localhost:8081/api/usuarios/${userToEdit.id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          // TODO: Adicionar token de autenticação para evitar erro 403
-          // 'Authorization': `Bearer ${seu_token_aqui}`,
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(editFormData),
       });
 
@@ -430,11 +377,7 @@ const AdminDashboard = () => {
     try {
       const response = await fetch(`http://localhost:8081/api/usuarios/${user.id}/toggle-status`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          // TODO: Adicionar token de autenticação para evitar erro 403
-          // 'Authorization': `Bearer ${seu_token_aqui}`,
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ ativo: !user.ativo })
       });
       
@@ -470,11 +413,7 @@ const AdminDashboard = () => {
     try {
       const response = await fetch(`http://localhost:8081/api/escolas/${escola.id}`, {
         method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          // TODO: Adicionar token de autenticação para evitar erro 403
-          // 'Authorization': `Bearer ${seu_token_aqui}`,
-        }
+        headers: getAuthHeaders()
       });
       
       if (!response.ok) {
@@ -512,11 +451,7 @@ const AdminDashboard = () => {
       
       const response = await fetch(endpoint, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          // TODO: Adicionar token de autenticação para evitar erro 403
-          // 'Authorization': `Bearer ${seu_token_aqui}`,
-        },
+        headers: getAuthHeaders(),
         body: escola.statusEscola !== 'ATIVO' ? JSON.stringify({
           ...escola,
           statusEscola: 'ATIVO'
@@ -557,11 +492,7 @@ const AdminDashboard = () => {
     try {
       const response = await fetch(`http://localhost:8081/api/estudantes/${estudante.id}`, {
         method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          // TODO: Adicionar token de autenticação para evitar erro 403
-          // 'Authorization': `Bearer ${seu_token_aqui}`,
-        }
+        headers: getAuthHeaders()
       });
       
       if (!response.ok) {
@@ -599,11 +530,7 @@ const AdminDashboard = () => {
       
       const response = await fetch(endpoint, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          // TODO: Adicionar token de autenticação para evitar erro 403
-          // 'Authorization': `Bearer ${seu_token_aqui}`,
-        },
+        headers: getAuthHeaders(),
         body: estudante.statusEstudante !== 'ATIVO' ? JSON.stringify({
           ...estudante,
           statusEstudante: 'ATIVO'
