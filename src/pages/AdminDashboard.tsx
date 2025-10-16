@@ -78,6 +78,25 @@ interface Escola {
   };
 }
 
+interface Estudante {
+  id: number;
+  nome: string;
+  dataNascimento: string;
+  cpf: string;
+  rg: string;
+  telefone: string;
+  endereco: string;
+  cidade: string;
+  estado: string;
+  cep: string;
+  statusEstudante: string; // ATIVO ou INATIVO
+  usuario: {
+    id: number;
+    nome: string;
+    email: string;
+  };
+}
+
 const AdminDashboard = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -87,12 +106,16 @@ const AdminDashboard = () => {
   const [filteredUsuarios, setFilteredUsuarios] = useState<Usuario[]>([]);
   const [escolas, setEscolas] = useState<Escola[]>([]);
   const [filteredEscolas, setFilteredEscolas] = useState<Escola[]>([]);
+  const [estudantes, setEstudantes] = useState<Estudante[]>([]);
+  const [filteredEstudantes, setFilteredEstudantes] = useState<Estudante[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchTermEscolas, setSearchTermEscolas] = useState('');
+  const [searchTermEstudantes, setSearchTermEstudantes] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('usuarios');
   const [userToDelete, setUserToDelete] = useState<Usuario | null>(null);
   const [escolaToDelete, setEscolaToDelete] = useState<Escola | null>(null);
+  const [estudanteToDelete, setEstudanteToDelete] = useState<Estudante | null>(null);
   const { toast } = useToast();
 
   // Função para carregar usuários da API
@@ -223,12 +246,72 @@ const AdminDashboard = () => {
     }
   }, [toast]);
 
+  // Função para carregar estudantes da API
+  const loadEstudantes = useCallback(async () => {
+    setIsLoading(true);
+    
+    try {
+      const response = await fetch('http://localhost:8081/api/estudantes', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Erro HTTP: ${response.status}`);
+      }
+      
+      const estudantesData: Estudante[] = await response.json();
+      setEstudantes(estudantesData);
+      
+      toast({
+        title: "Estudantes carregados",
+        description: `${estudantesData.length} estudantes encontrados.`,
+      });
+      
+    } catch (error) {
+      console.error('Erro ao carregar estudantes:', error);
+      toast({
+        title: "Erro",
+        description: "Erro ao carregar lista de estudantes. Verifique se o backend está rodando na porta 8081.",
+        variant: "destructive",
+      });
+      
+      // Fallback com dados mock em caso de erro
+      const mockEstudantes: Estudante[] = [
+        {
+          id: 1,
+          nome: 'João Silva (Mock)',
+          dataNascimento: '1995-06-15',
+          cpf: '123.456.789-00',
+          rg: '12.345.678-9',
+          telefone: '(11) 99999-9999',
+          endereco: 'Rua das Flores, 123',
+          cidade: 'São Paulo',
+          estado: 'SP',
+          cep: '01234-567',
+          statusEstudante: 'ATIVO',
+          usuario: {
+            id: 1,
+            nome: 'João Silva',
+            email: 'joao@gmail.com'
+          }
+        }
+      ];
+      setEstudantes(mockEstudantes);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [toast]);
+
   useEffect(() => {
     if (isAuthenticated) {
       loadUsers();
       loadEscolas();
+      loadEstudantes();
     }
-  }, [isAuthenticated, loadUsers, loadEscolas]);
+  }, [isAuthenticated, loadUsers, loadEscolas, loadEstudantes]);
 
   useEffect(() => {
     // Filtrar usuários baseado no termo de busca
@@ -248,6 +331,16 @@ const AdminDashboard = () => {
     );
     setFilteredEscolas(filtered);
   }, [searchTermEscolas, escolas]);
+
+  useEffect(() => {
+    // Filtrar estudantes baseado no termo de busca
+    const filtered = estudantes.filter(estudante => 
+      estudante.nome.toLowerCase().includes(searchTermEstudantes.toLowerCase()) ||
+      estudante.usuario?.email.toLowerCase().includes(searchTermEstudantes.toLowerCase()) ||
+      estudante.cpf.toLowerCase().includes(searchTermEstudantes.toLowerCase())
+    );
+    setFilteredEstudantes(filtered);
+  }, [searchTermEstudantes, estudantes]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -425,6 +518,89 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleDeleteEstudante = async (estudante: Estudante) => {
+    setIsLoading(true);
+    
+    try {
+      const response = await fetch(`http://localhost:8081/api/estudantes/${estudante.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Erro HTTP: ${response.status}`);
+      }
+      
+      // Remover o estudante da lista local
+      setEstudantes(prev => prev.filter(e => e.id !== estudante.id));
+      setEstudanteToDelete(null);
+      
+      toast({
+        title: "Estudante removido",
+        description: `${estudante.nome} foi removido do sistema.`,
+      });
+      
+    } catch (error) {
+      console.error('Erro ao deletar estudante:', error);
+      toast({
+        title: "Erro",
+        description: "Erro ao remover estudante. Verifique se o backend está funcionando.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const toggleEstudanteStatus = async (estudante: Estudante) => {
+    setIsLoading(true);
+    
+    try {
+      const endpoint = estudante.statusEstudante === 'ATIVO' 
+        ? `http://localhost:8081/api/estudantes/inativar/${estudante.id}`
+        : `http://localhost:8081/api/estudantes/update/${estudante.id}`;
+      
+      const response = await fetch(endpoint, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: estudante.statusEstudante !== 'ATIVO' ? JSON.stringify({
+          ...estudante,
+          statusEstudante: 'ATIVO'
+        }) : undefined
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Erro HTTP: ${response.status}`);
+      }
+      
+      // Atualizar o status do estudante na lista local
+      setEstudantes(prev => prev.map(e => 
+        e.id === estudante.id 
+          ? { ...e, statusEstudante: e.statusEstudante === 'ATIVO' ? 'INATIVO' : 'ATIVO' } 
+          : e
+      ));
+      
+      toast({
+        title: "Status alterado",
+        description: `${estudante.nome} foi ${estudante.statusEstudante === 'ATIVO' ? 'inativado' : 'ativado'}.`,
+      });
+      
+    } catch (error) {
+      console.error('Erro ao alterar status do estudante:', error);
+      toast({
+        title: "Erro",
+        description: "Erro ao alterar status do estudante. Verifique se o backend está funcionando.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleLogout = () => {
     setIsAuthenticated(false);
     setEmail('');
@@ -433,8 +609,11 @@ const AdminDashboard = () => {
     setFilteredUsuarios([]);
     setEscolas([]);
     setFilteredEscolas([]);
+    setEstudantes([]);
+    setFilteredEstudantes([]);
     setSearchTerm('');
     setSearchTermEscolas('');
+    setSearchTermEstudantes('');
   };
 
   // Tela de login do admin
@@ -573,10 +752,8 @@ const AdminDashboard = () => {
               <div className="flex items-center space-x-2">
                 <User className="h-5 w-5 text-purple-600" />
                 <div>
-                  <p className="text-sm text-gray-600">Intercambistas</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {usuarios.filter(u => u.nivelAcesso === 'INTERCAMBISTA').length}
-                  </p>
+                  <p className="text-sm text-gray-600">Total de Estudantes</p>
+                  <p className="text-2xl font-bold text-gray-900">{estudantes.length}</p>
                 </div>
               </div>
             </CardContent>
@@ -585,11 +762,11 @@ const AdminDashboard = () => {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center space-x-2">
-                <Building className="h-5 w-5 text-teal-600" />
+                <User className="h-5 w-5 text-teal-600" />
                 <div>
-                  <p className="text-sm text-gray-600">Escolas Ativas</p>
+                  <p className="text-sm text-gray-600">Estudantes Ativos</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {escolas.filter(e => e.statusEscola === 'ATIVO').length}
+                    {estudantes.filter(e => e.statusEstudante === 'ATIVO').length}
                   </p>
                 </div>
               </div>
@@ -599,7 +776,7 @@ const AdminDashboard = () => {
 
         {/* Sistema de Abas */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="usuarios" className="flex items-center space-x-2">
               <Users className="h-4 w-4" />
               <span>Usuários ({usuarios.length})</span>
@@ -607,6 +784,10 @@ const AdminDashboard = () => {
             <TabsTrigger value="escolas" className="flex items-center space-x-2">
               <Building className="h-4 w-4" />
               <span>Escolas ({escolas.length})</span>
+            </TabsTrigger>
+            <TabsTrigger value="estudantes" className="flex items-center space-x-2">
+              <User className="h-4 w-4" />
+              <span>Estudantes ({estudantes.length})</span>
             </TabsTrigger>
           </TabsList>
 
@@ -826,6 +1007,119 @@ const AdminDashboard = () => {
               </CardContent>
             </Card>
           </TabsContent>
+
+          {/* Aba de Estudantes */}
+          <TabsContent value="estudantes" className="mt-6">
+            {/* Busca de Estudantes */}
+            <Card className="mb-6">
+              <CardContent className="p-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Input
+                    placeholder="Buscar estudantes por nome, email ou CPF..."
+                    value={searchTermEstudantes}
+                    onChange={(e) => setSearchTermEstudantes(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Lista de estudantes */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <User className="h-5 w-5" />
+                  <span>Lista de Estudantes ({filteredEstudantes.length})</span>
+                  <Button 
+                    onClick={loadEstudantes} 
+                    disabled={isLoading}
+                    variant="outline"
+                    size="sm"
+                  >
+                    {isLoading ? 'Carregando...' : 'Atualizar'}
+                  </Button>
+                </CardTitle>
+              </CardHeader>
+              
+              <CardContent>
+                {isLoading ? (
+                  <div className="text-center py-8">
+                    <p className="text-gray-600">Carregando estudantes...</p>
+                  </div>
+                ) : filteredEstudantes.length === 0 ? (
+                  <div className="text-center py-8">
+                    <p className="text-gray-600">Nenhum estudante encontrado.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {filteredEstudantes.map((estudante) => (
+                      <div
+                        key={estudante.id}
+                        className={`p-4 border rounded-lg ${
+                          estudante.statusEstudante === 'ATIVO' ? 'bg-white' : 'bg-gray-50 opacity-75'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-3">
+                              <div className={`w-3 h-3 rounded-full ${
+                                estudante.statusEstudante === 'ATIVO' ? 'bg-green-500' : 'bg-red-500'
+                              }`}></div>
+                              <div className="flex-1">
+                                <h3 className="font-semibold text-gray-900">{estudante.nome}</h3>
+                                <p className="text-sm text-gray-600">{estudante.usuario?.email}</p>
+                                <div className="flex items-center space-x-4 mt-1">
+                                  <div className="flex items-center space-x-1">
+                                    <User className="h-3 w-3 text-gray-400" />
+                                    <span className="text-xs text-gray-500">CPF: {estudante.cpf}</span>
+                                  </div>
+                                  <div className="flex items-center space-x-1">
+                                    <Phone className="h-3 w-3 text-gray-400" />
+                                    <span className="text-xs text-gray-500">{estudante.telefone}</span>
+                                  </div>
+                                  <div className="flex items-center space-x-1">
+                                    <MapPin className="h-3 w-3 text-gray-400" />
+                                    <span className="text-xs text-gray-500">{estudante.cidade}, {estudante.estado}</span>
+                                  </div>
+                                </div>
+                                <p className="text-xs text-gray-500 mt-1">
+                                  Nascimento: {new Date(estudante.dataNascimento).toLocaleDateString('pt-BR')} | 
+                                  Endereço: {estudante.endereco}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center space-x-2">
+                            <Button
+                              onClick={() => toggleEstudanteStatus(estudante)}
+                              variant="outline"
+                              size="sm"
+                              className={estudante.statusEstudante === 'ATIVO' ? 'text-orange-600 hover:text-orange-700' : 'text-green-600 hover:text-green-700'}
+                            >
+                              <Edit className="h-4 w-4 mr-1" />
+                              {estudante.statusEstudante === 'ATIVO' ? 'Inativar' : 'Ativar'}
+                            </Button>
+                            
+                            <Button
+                              onClick={() => setEstudanteToDelete(estudante)}
+                              variant="outline"
+                              size="sm"
+                              className="text-red-600 hover:text-red-700"
+                            >
+                              <Trash2 className="h-4 w-4 mr-1" />
+                              Deletar
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </div>
 
@@ -865,6 +1159,28 @@ const AdminDashboard = () => {
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => escolaToDelete && handleDeleteEscola(escolaToDelete)}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Deletar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Dialog de confirmação de deleção de estudante */}
+      <AlertDialog open={!!estudanteToDelete} onOpenChange={() => setEstudanteToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar exclusão de estudante</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja deletar o estudante "{estudanteToDelete?.nome}"? 
+              Esta ação não pode ser desfeita e afetará todos os dados relacionados.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => estudanteToDelete && handleDeleteEstudante(estudanteToDelete)}
               className="bg-red-600 hover:bg-red-700"
             >
               Deletar
