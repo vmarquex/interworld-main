@@ -93,7 +93,7 @@ const LoginForm = () => {
         
         // Verificar se o nível de acesso corresponde ao tipo selecionado
         if (userData.nivelAcesso === nivelAcesso) {
-          // Salvar dados do usuário no localStorage
+          // Salvar dados do usuário e token no localStorage
           localStorage.setItem('userData', JSON.stringify({
             id: userData.id,
             email: userData.email,
@@ -101,6 +101,7 @@ const LoginForm = () => {
             name: userData.nome,
             loginTime: new Date().toISOString()
           }));
+          localStorage.setItem('jwtToken', userData.token); // Assumindo que o token vem no campo 'token'
           localStorage.setItem('isLoggedIn', 'true');
 
           toast({

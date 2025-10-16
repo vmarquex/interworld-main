@@ -136,6 +136,14 @@ const AdminDashboard = () => {
   const [estudanteToDelete, setEstudanteToDelete] = useState<Estudante | null>(null);
   const { toast } = useToast();
 
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem('jwtToken');
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    };
+  };
+
   // Função para carregar usuários da API
   const loadUsers = useCallback(async () => {
     setIsLoading(true);
@@ -144,9 +152,7 @@ const AdminDashboard = () => {
       // Chamada para a API real na porta 8081
       const response = await fetch('http://localhost:8081/api/usuarios', {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        }
+        headers: getAuthHeaders(),
       });
       
       if (!response.ok) {
@@ -192,9 +198,7 @@ const AdminDashboard = () => {
     try {
       const response = await fetch('http://localhost:8081/api/escolas', {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        }
+        headers: getAuthHeaders(),
       });
       
       if (!response.ok) {
@@ -230,9 +234,7 @@ const AdminDashboard = () => {
     try {
       const response = await fetch('http://localhost:8081/api/estudantes', {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        }
+        headers: getAuthHeaders(),
       });
       
       if (!response.ok) {
@@ -301,22 +303,42 @@ const AdminDashboard = () => {
     setFilteredEstudantes(filtered);
   }, [searchTermEstudantes, estudantes]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Verificar credenciais do admin
-    if (email === 'adm@gmail.com' && password === '12345678') {
-      setIsAuthenticated(true);
-      toast({
-        title: "Acesso autorizado",
-        description: "Bem-vindo ao painel administrativo!",
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('http://localhost:8081/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, senha: password }),
       });
-    } else {
+
+      if (!response.ok) {
+        throw new Error('Credenciais inválidas ou erro no servidor');
+      }
+
+      const userData = await response.json();
+
+      if (userData.nivelAcesso === 'ADMIN') {
+        localStorage.setItem('jwtToken', userData.token);
+        setIsAuthenticated(true);
+        toast({
+          title: "Acesso autorizado",
+          description: "Bem-vindo ao painel administrativo!",
+        });
+      } else {
+        throw new Error('Acesso restrito a administradores');
+      }
+
+    } catch (error: any) {
       toast({
         title: "Acesso negado",
-        description: "Credenciais inválidas para administrador.",
+        description: error.message || "Credenciais inválidas para administrador.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -326,9 +348,7 @@ const AdminDashboard = () => {
     try {
       const response = await fetch(`http://localhost:8081/api/usuarios/${user.id}`, {
         method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        }
+        headers: getAuthHeaders(),
       });
       
       if (!response.ok) {
@@ -362,9 +382,7 @@ const AdminDashboard = () => {
     try {
       const response = await fetch(`http://localhost:8081/api/usuarios/${user.id}/toggle-status`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ ativo: !user.ativo })
       });
       
@@ -401,9 +419,7 @@ const AdminDashboard = () => {
     try {
       const response = await fetch(`http://localhost:8081/api/usuarios/${userToEdit.id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify(editFormData),
       });
 
@@ -440,9 +456,7 @@ const AdminDashboard = () => {
     try {
       const response = await fetch(`http://localhost:8081/api/escolas/${escola.id}`, {
         method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        }
+        headers: getAuthHeaders(),
       });
       
       if (!response.ok) {
@@ -480,9 +494,7 @@ const AdminDashboard = () => {
       
       const response = await fetch(endpoint, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
         body: escola.statusEscola !== 'ATIVO' ? JSON.stringify({
           ...escola,
           statusEscola: 'ATIVO'
@@ -523,9 +535,7 @@ const AdminDashboard = () => {
     try {
       const response = await fetch(`http://localhost:8081/api/estudantes/${estudante.id}`, {
         method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        }
+        headers: getAuthHeaders(),
       });
       
       if (!response.ok) {
@@ -563,9 +573,7 @@ const AdminDashboard = () => {
       
       const response = await fetch(endpoint, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
         body: estudante.statusEstudante !== 'ATIVO' ? JSON.stringify({
           ...estudante,
           statusEstudante: 'ATIVO'
