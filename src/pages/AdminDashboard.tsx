@@ -315,29 +315,32 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     // Filtrar usuários baseado no termo de busca
+    if (!usuarios) return;
     const filtered = usuarios.filter(user => 
-      user.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase())
+      (user.nome?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+      (user.email?.toLowerCase() || '').includes(searchTerm.toLowerCase())
     );
     setFilteredUsuarios(filtered);
   }, [searchTerm, usuarios]);
 
   useEffect(() => {
     // Filtrar escolas baseado no termo de busca
+    if (!escolas) return;
     const filtered = escolas.filter(escola => 
-      escola.nome.toLowerCase().includes(searchTermEscolas.toLowerCase()) ||
-      escola.usuario?.email.toLowerCase().includes(searchTermEscolas.toLowerCase()) ||
-      escola.pais.toLowerCase().includes(searchTermEscolas.toLowerCase())
+      (escola.nome?.toLowerCase() || '').includes(searchTermEscolas.toLowerCase()) ||
+      (escola.usuario?.email?.toLowerCase() || '').includes(searchTermEscolas.toLowerCase()) ||
+      (escola.pais?.toLowerCase() || '').includes(searchTermEscolas.toLowerCase())
     );
     setFilteredEscolas(filtered);
   }, [searchTermEscolas, escolas]);
 
   useEffect(() => {
     // Filtrar estudantes baseado no termo de busca
+    if (!estudantes) return;
     const filtered = estudantes.filter(estudante => 
-      estudante.nome.toLowerCase().includes(searchTermEstudantes.toLowerCase()) ||
-      estudante.usuario?.email.toLowerCase().includes(searchTermEstudantes.toLowerCase()) ||
-      estudante.cpf.toLowerCase().includes(searchTermEstudantes.toLowerCase())
+      (estudante.nome?.toLowerCase() || '').includes(searchTermEstudantes.toLowerCase()) ||
+      (estudante.usuario?.email?.toLowerCase() || '').includes(searchTermEstudantes.toLowerCase()) ||
+      (estudante.cpf?.toLowerCase() || '').includes(searchTermEstudantes.toLowerCase())
     );
     setFilteredEstudantes(filtered);
   }, [searchTermEstudantes, estudantes]);
