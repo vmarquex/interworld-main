@@ -16,7 +16,7 @@ const StudentRegister = () => {
   const { toast } = useToast();
   
   const [formData, setFormData] = useState({
-    name: '',
+    nome: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -119,7 +119,7 @@ const StudentRegister = () => {
       
       // Primeiro, criar o usuário
       const userData = {
-        nome: formData.name,
+        nome: formData.nome,
         email: formData.email,
         senha: formData.password
       };
@@ -141,6 +141,7 @@ const StudentRegister = () => {
       // Preparar dados para enviar ao backend
       const estudanteData = {
         usuario: user,
+        Nome: formData.nome,
         dataNascimento: formData.dataNascimento,
         cpf: formData.cpf,
         rg: formData.rg,
@@ -185,8 +186,6 @@ const StudentRegister = () => {
       setIsLoading(false);
     }
   };
-
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 py-8 px-4">
       <div className="absolute top-4 left-4">
@@ -221,13 +220,12 @@ const StudentRegister = () => {
                 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Nome Completo</Label>
+                    <Label htmlFor="nome">Nome Completo</Label>
                     <Input
-                      id="name"
-                      name="name"
+                      id="nome"
                       placeholder="Seu nome completo"
-                      value={formData.name}
-                      onChange={handleInputChange}
+                      value={formData.nome}
+                      onChange={(e) => handleInputChange('nome',e.target.value)}
                       maxLength={100} // Limite padrão para nomes
                       required
                     />

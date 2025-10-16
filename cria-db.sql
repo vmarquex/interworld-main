@@ -99,6 +99,7 @@ CREATE TABLE Estudante
     id              INT             IDENTITY,
     usuario_id      INT             NOT NULL,
     dataNascimento  VARCHAR(10)         NULL,
+	nome			VARCHAR(60)         NULL,
     cpf             VARCHAR(14)         NULL,
     rg              VARCHAR(12)         NULL,
     telefone        VARCHAR(20)         NULL,
