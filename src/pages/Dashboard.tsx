@@ -3,17 +3,16 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { User, Building, Home, Settings, LogOut, Bell, Menu, X } from 'lucide-react';
+import { User, Building, Home, Settings, LogOut, Menu, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import StudentDashboard from '@/components/StudentDashboard';
 import SchoolDashboard from '@/components/SchoolDashboard';
 import EditProfile from '@/components/EditProfile';
 import ChangePassword from '@/components/ChangePassword';
 import Preferences from '@/components/Preferences';
-import Notifications from '@/components/Notifications';
 import { useTranslation } from 'react-i18next';
 
-type SettingsView = 'main' | 'profile' | 'password' | 'preferences' | 'notifications';
+type SettingsView = 'main' | 'profile' | 'password' | 'preferences';
 
 interface UserData {
   id: string;
@@ -81,11 +80,9 @@ const Dashboard = () => {
       case 'profile':
         return <EditProfile userData={userData} onBack={() => setSettingsView('main')} onSave={(newData) => { handleProfileSave(newData); setSettingsView('main'); }} />;
       case 'password':
-        return <ChangePassword userData={userData} onBack={() => setSettingsView('main')} />;
+        return <ChangePassword onBack={() => setSettingsView('main')} />;
       case 'preferences':
         return <Preferences onBack={() => setSettingsView('main')} />;
-      case 'notifications':
-        return <Notifications onBack={() => setSettingsView('main')} />;
       default:
         return (
           <Card>
@@ -109,9 +106,6 @@ const Dashboard = () => {
                 </Button>
                 <Button variant="outline" className="w-full justify-start text-sm" onClick={() => setSettingsView('preferences')}>
                   Preferências
-                </Button>
-                <Button variant="outline" className="w-full justify-start text-sm" onClick={() => setSettingsView('notifications')}>
-                  Notificações
                 </Button>
               </div>
               <div className="pt-4 border-t">
@@ -153,12 +147,6 @@ const Dashboard = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
-              <Link to="/" className="hidden md:block">
-                <Button variant="ghost" size="sm">
-                  <Home className="h-4 w-4 mr-2" />
-                  Início
-                </Button>
-              </Link>
               <div className={`w-10 h-10 bg-gradient-to-r ${themeColors.primary} rounded-full flex items-center justify-center`}>
                 {isSchool ? <Building className="h-5 w-5 text-white" /> : <User className="h-5 w-5 text-white" />}
               </div>
@@ -171,6 +159,12 @@ const Dashboard = () => {
             </div>
 
             <div className="hidden md:flex items-center space-x-4">
+              <Link to="/">
+                <Button variant="ghost" size="sm">
+                  <Home className="h-4 w-4 mr-2" />
+                  Início
+                </Button>
+              </Link>
               <Button
                 variant="ghost"
                 size="sm"
@@ -206,7 +200,7 @@ const Dashboard = () => {
           {/* Mobile menu */}
           {showMobileMenu && (
             <div className="md:hidden border-t py-4 space-y-2">
-              <Link to="/" className="block">
+              <Link to="/">
                 <Button variant="ghost" className="w-full justify-start">
                   <Home className="h-4 w-4 mr-2" />
                   Início
@@ -273,7 +267,7 @@ const Dashboard = () => {
                 </CardHeader>
               </Card>
 
-              {userData.userType === 'student' && <StudentDashboard />}
+              {userData.userType === 'student' && <StudentDashboard userData={userData} />}
               {userData.userType === 'school' && <SchoolDashboard />}
 
               {/* Quick Actions */}

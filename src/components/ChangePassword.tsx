@@ -7,19 +7,11 @@ import { Lock, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 
-interface UserData {
-  id: string;
-  email: string;
-  userType: 'student' | 'school';
-  name: string;
-}
-
 interface ChangePasswordProps {
   onBack: () => void;
-  userData: UserData;
 }
 
-const ChangePassword = ({ onBack, userData }: ChangePasswordProps) => {
+const ChangePassword = ({ onBack }: ChangePasswordProps) => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -29,6 +21,7 @@ const ChangePassword = ({ onBack, userData }: ChangePasswordProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (newPassword !== confirmPassword) {
       toast({
         title: 'Erro',
@@ -37,27 +30,38 @@ const ChangePassword = ({ onBack, userData }: ChangePasswordProps) => {
       });
       return;
     }
-    if (newPassword.length < 8) {
-        toast({
-          title: 'Senha muito fraca',
-          description: 'A nova senha deve ter pelo menos 8 caracteres.',
-          variant: 'destructive',
-        });
-        return;
-      }
     
+    if (newPassword.length < 8) {
+      toast({
+        title: 'Senha muito fraca',
+        description: 'A nova senha deve ter pelo menos 8 caracteres.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const response = await fetch(`http://localhost:8081/api/users/${userData.id}/change-password`, {
+      // Obter dados do usuário do localStorage
+      const storedUserData = localStorage.getItem('userData');
+      if (!storedUserData) {
+        throw new Error('Dados do usuário não encontrados');
+      }
+
+      const parsedUserData = JSON.parse(storedUserData);
+      const userId = parsedUserData.id;
+
+      // Fazer UPDATE da senha no banco de dados
+      const response = await fetch(`http://localhost:8081/api/users/${userId}/password`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('authToken') || ''}`
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
         },
         body: JSON.stringify({
-          currentPassword: currentPassword,
-          newPassword: newPassword,
+          senhaAtual: currentPassword,
+          novaSenha: newPassword
         }),
       });
 
@@ -66,20 +70,22 @@ const ChangePassword = ({ onBack, userData }: ChangePasswordProps) => {
           title: 'Sucesso',
           description: 'Senha alterada com sucesso!',
         });
+        
+        // Limpar campos
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+        
         onBack();
       } else {
-        const errorData = await response.text();
-        toast({
-          title: 'Erro ao alterar senha',
-          description: errorData || 'Não foi possível alterar a senha. Verifique sua senha atual.',
-          variant: 'destructive',
-        });
+        const errorText = await response.text();
+        throw new Error(errorText || 'Erro ao alterar senha');
       }
     } catch (error) {
       console.error('Erro ao alterar senha:', error);
       toast({
-        title: 'Erro de conexão',
-        description: 'Não foi possível se conectar ao servidor.',
+        title: 'Erro ao alterar senha',
+        description: error instanceof Error ? error.message : 'Tente novamente mais tarde.',
         variant: 'destructive',
       });
     } finally {
@@ -140,7 +146,7 @@ const ChangePassword = ({ onBack, userData }: ChangePasswordProps) => {
             Cancelar
           </Button>
           <Button type="submit" disabled={isLoading}>
-            {isLoading ? 'Salvando...' : 'Salvar Alterações'}
+            {isLoading ? 'Alterando...' : 'Salvar Alterações'}
           </Button>
         </CardFooter>
       </form>

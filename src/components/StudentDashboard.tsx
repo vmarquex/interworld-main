@@ -5,11 +5,19 @@ import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, BookOpen, Award, MapPin } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-const StudentDashboard = () => {
+interface StudentDashboardProps {
+  userData?: {
+    name: string;
+    email: string;
+    userType: string;
+  };
+}
+
+const StudentDashboard = ({ userData }: StudentDashboardProps) => {
   const isMobile = useIsMobile();
 
-  const mockStudent = {
-    name: 'Ana Silva',
+  const studentInfo = {
+    name: userData?.name || 'Estudante',
     program: 'Intercâmbio Canadá - Toronto',
     status: 'Ativo',
     startDate: '2024-01-15',
@@ -38,19 +46,18 @@ const StudentDashboard = () => {
           <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
-                Olá, {mockStudent.name}! 👋
+                Olá, {studentInfo.name}! 👋
               </h1>
-              <p className="text-gray-600 mt-1">{mockStudent.program}</p>
+              <p className="text-gray-600 mt-1">{studentInfo.program}</p>
             </div>
             <Badge className="bg-green-100 text-green-800 mt-2 md:mt-0 self-start">
               <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
-              {mockStudent.status}
+              {studentInfo.status}
             </Badge>
           </div>
         </div>
 
-        <div className="space-y-6">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Today's Schedule */}
           <Card className="md:col-span-2 lg:col-span-1">
             <CardHeader>

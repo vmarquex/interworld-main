@@ -5,16 +5,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 
-interface UserData {
-  id: string;
-  name: string;
-  email: string;
-}
-
 interface EditStudentProfileProps {
   onBack: () => void;
   onSave: (data: { name: string }) => void;
-  userData: UserData;
+  userData: { name: string; email: string; id?: string };
 }
 
 const EditStudentProfile = ({ onBack, onSave, userData }: EditStudentProfileProps) => {
@@ -25,40 +19,50 @@ const EditStudentProfile = ({ onBack, onSave, userData }: EditStudentProfileProp
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
-      const response = await fetch(`http://localhost:8081/api/users/${userData.id}`, {
+      // Obter dados do usuário do localStorage
+      const storedUserData = localStorage.getItem('userData');
+      if (!storedUserData) {
+        throw new Error('Dados do usuário não encontrados');
+      }
+
+      const parsedUserData = JSON.parse(storedUserData);
+      const userId = parsedUserData.id;
+
+      // Fazer UPDATE no banco de dados
+      const response = await fetch(`http://localhost:8081/api/users/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('authToken') || ''}`
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
         },
         body: JSON.stringify({
           nome: name,
-          email: userData.email, // Email não é editável, mas pode ser necessário no corpo
+          email: userData.email
         }),
       });
 
       if (response.ok) {
-        const updatedUser = await response.json();
+        // Atualizar localStorage com novos dados
+        const updatedUserData = { ...parsedUserData, name };
+        localStorage.setItem('userData', JSON.stringify(updatedUserData));
+        
         toast({
-          title: 'Sucesso',
-          description: 'Perfil atualizado com sucesso!',
+          title: 'Perfil atualizado',
+          description: 'Suas informações foram salvas com sucesso.',
         });
-        onSave({ name: updatedUser.nome });
+        
+        onSave({ name });
       } else {
-        const errorData = await response.text();
-        toast({
-          title: 'Erro ao atualizar perfil',
-          description: errorData || 'Não foi possível salvar as alterações.',
-          variant: 'destructive',
-        });
+        const errorText = await response.text();
+        throw new Error(errorText || 'Erro ao atualizar perfil');
       }
     } catch (error) {
       console.error('Erro ao atualizar perfil:', error);
       toast({
-        title: 'Erro de conexão',
-        description: 'Não foi possível se conectar ao servidor.',
+        title: 'Erro ao atualizar',
+        description: error instanceof Error ? error.message : 'Tente novamente mais tarde.',
         variant: 'destructive',
       });
     } finally {
