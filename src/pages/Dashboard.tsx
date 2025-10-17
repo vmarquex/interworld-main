@@ -81,7 +81,7 @@ const Dashboard = () => {
       case 'profile':
         return <EditProfile userData={userData} onBack={() => setSettingsView('main')} onSave={(newData) => { handleProfileSave(newData); setSettingsView('main'); }} />;
       case 'password':
-        return <ChangePassword onBack={() => setSettingsView('main')} />;
+        return <ChangePassword userData={userData} onBack={() => setSettingsView('main')} />;
       case 'preferences':
         return <Preferences onBack={() => setSettingsView('main')} />;
       case 'notifications':
@@ -153,6 +153,12 @@ const Dashboard = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
+              <Link to="/" className="hidden md:block">
+                <Button variant="ghost" size="sm">
+                  <Home className="h-4 w-4 mr-2" />
+                  Início
+                </Button>
+              </Link>
               <div className={`w-10 h-10 bg-gradient-to-r ${themeColors.primary} rounded-full flex items-center justify-center`}>
                 {isSchool ? <Building className="h-5 w-5 text-white" /> : <User className="h-5 w-5 text-white" />}
               </div>
@@ -173,10 +179,6 @@ const Dashboard = () => {
               >
                 <Settings className="h-4 w-4 mr-2" />
                 {t('settings')}
-              </Button>
-              <Button variant="ghost" size="sm">
-                <Bell className="h-4 w-4 mr-2" />
-                {t('notifications')}
               </Button>
               <Button
                 variant="outline"
@@ -204,6 +206,12 @@ const Dashboard = () => {
           {/* Mobile menu */}
           {showMobileMenu && (
             <div className="md:hidden border-t py-4 space-y-2">
+              <Link to="/" className="block">
+                <Button variant="ghost" className="w-full justify-start">
+                  <Home className="h-4 w-4 mr-2" />
+                  Início
+                </Button>
+              </Link>
               <Button
                 variant="ghost"
                 className="w-full justify-start"
@@ -214,10 +222,6 @@ const Dashboard = () => {
               >
                 <Settings className="h-4 w-4 mr-2" />
                 {t('settings')}
-              </Button>
-              <Button variant="ghost" className="w-full justify-start">
-                <Bell className="h-4 w-4 mr-2" />
-                {t('notifications')}
               </Button>
               <Button
                 variant="ghost"

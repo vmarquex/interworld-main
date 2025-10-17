@@ -49,7 +49,8 @@ const StudentDashboard = () => {
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="space-y-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Today's Schedule */}
           <Card className="md:col-span-2 lg:col-span-1">
             <CardHeader>

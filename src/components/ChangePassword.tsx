@@ -7,18 +7,27 @@ import { Lock, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 
-interface ChangePasswordProps {
-  onBack: () => void;
+interface UserData {
+  id: string;
+  email: string;
+  userType: 'student' | 'school';
+  name: string;
 }
 
-const ChangePassword = ({ onBack }: ChangePasswordProps) => {
+interface ChangePasswordProps {
+  onBack: () => void;
+  userData: UserData;
+}
+
+const ChangePassword = ({ onBack, userData }: ChangePasswordProps) => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
       toast({
@@ -36,13 +45,46 @@ const ChangePassword = ({ onBack }: ChangePasswordProps) => {
         });
         return;
       }
-    // Lógica de alteração de senha (mock)
-    console.log({ currentPassword, newPassword });
-    toast({
-      title: 'Sucesso',
-      description: 'Senha alterada com sucesso!',
-    });
-    onBack();
+    
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(`http://localhost:8081/api/users/${userData.id}/change-password`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken') || ''}`
+        },
+        body: JSON.stringify({
+          currentPassword: currentPassword,
+          newPassword: newPassword,
+        }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: 'Sucesso',
+          description: 'Senha alterada com sucesso!',
+        });
+        onBack();
+      } else {
+        const errorData = await response.text();
+        toast({
+          title: 'Erro ao alterar senha',
+          description: errorData || 'Não foi possível alterar a senha. Verifique sua senha atual.',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      console.error('Erro ao alterar senha:', error);
+      toast({
+        title: 'Erro de conexão',
+        description: 'Não foi possível se conectar ao servidor.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -94,10 +136,12 @@ const ChangePassword = ({ onBack }: ChangePasswordProps) => {
           </div>
         </CardContent>
         <CardFooter className="flex justify-end space-x-2">
-          <Button type="button" variant="ghost" onClick={onBack}>
+          <Button type="button" variant="ghost" onClick={onBack} disabled={isLoading}>
             Cancelar
           </Button>
-          <Button type="submit">Salvar Alterações</Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? 'Salvando...' : 'Salvar Alterações'}
+          </Button>
         </CardFooter>
       </form>
     </Card>
