@@ -13,7 +13,6 @@ import {
   Shield, 
   Users, 
   Edit, 
-  Trash2, 
   Search,
   LogOut,
   User,
@@ -138,8 +137,6 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('usuarios');
   const [userToEdit, setUserToEdit] = useState<Usuario | null>(null);
   const [editFormData, setEditFormData] = useState<UsuarioDTO>({ nome: '', email: '', nivelAcesso: '' });
-  const [escolaToDelete, setEscolaToDelete] = useState<Escola | null>(null);
-  const [estudanteToDelete, setEstudanteToDelete] = useState<Estudante | null>(null);
   const { toast } = useToast();
 
   const getAuthHeaders = () => {
@@ -266,13 +263,33 @@ const AdminDashboard = () => {
     }
   }, [toast]);
 
-  useEffect(() => {
+  // Função para recarregar todos os dados
+  const refreshAllData = useCallback(async () => {
     if (isAuthenticated) {
-      loadUsers();
-      loadEscolas();
-      loadEstudantes();
+      await Promise.all([
+        loadUsers(),
+        loadEscolas(),
+        loadEstudantes()
+      ]);
     }
   }, [isAuthenticated, loadUsers, loadEscolas, loadEstudantes]);
+
+  // Efeito para carregar dados na inicialização
+  useEffect(() => {
+    refreshAllData();
+  }, [refreshAllData]);
+
+  // Efeito para recarregar dados quando mudar de aba (para sincronização)
+  useEffect(() => {
+    if (isAuthenticated) {
+      // Pequeno delay para garantir que novos dados sejam refletidos
+      const timer = setTimeout(() => {
+        refreshAllData();
+      }, 500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [activeTab, refreshAllData, isAuthenticated]);
 
   useEffect(() => {
     // Filtrar usuários baseado no termo de busca
@@ -407,39 +424,6 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleDeleteEscola = async (escola: Escola) => {
-    setIsLoading(true);
-    
-    try {
-      const response = await fetch(`http://localhost:8081/api/escolas/${escola.id}`, {
-        method: 'DELETE',
-        headers: getAuthHeaders()
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Erro HTTP: ${response.status}`);
-      }
-      
-      // Remover a escola da lista local
-      setEscolas(prev => prev.filter(e => e.id !== escola.id));
-      setEscolaToDelete(null);
-      
-      toast({
-        title: "Escola removida",
-        description: `${escola.nome} foi removida do sistema.`,
-      });
-      
-    } catch (error) {
-      console.error('Erro ao deletar escola:', error);
-      toast({
-        title: "Erro",
-        description: "Erro ao remover escola. Verifique se o backend está funcionando.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const toggleEscolaStatus = async (escola: Escola) => {
     setIsLoading(true);
@@ -462,12 +446,8 @@ const AdminDashboard = () => {
         throw new Error(`Erro HTTP: ${response.status}`);
       }
       
-      // Atualizar o status da escola na lista local
-      setEscolas(prev => prev.map(e => 
-        e.id === escola.id 
-          ? { ...e, statusEscola: e.statusEscola === 'ATIVO' ? 'INATIVO' : 'ATIVO' } 
-          : e
-      ));
+      // Recarregar dados para sincronização
+      await refreshAllData();
       
       toast({
         title: "Status alterado",
@@ -486,39 +466,6 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleDeleteEstudante = async (estudante: Estudante) => {
-    setIsLoading(true);
-    
-    try {
-      const response = await fetch(`http://localhost:8081/api/estudantes/${estudante.id}`, {
-        method: 'DELETE',
-        headers: getAuthHeaders()
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Erro HTTP: ${response.status}`);
-      }
-      
-      // Remover o estudante da lista local
-      setEstudantes(prev => prev.filter(e => e.id !== estudante.id));
-      setEstudanteToDelete(null);
-      
-      toast({
-        title: "Estudante removido",
-        description: `${estudante.nome} foi removido do sistema.`,
-      });
-      
-    } catch (error) {
-      console.error('Erro ao deletar estudante:', error);
-      toast({
-        title: "Erro",
-        description: "Erro ao remover estudante. Verifique se o backend está funcionando.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const toggleEstudanteStatus = async (estudante: Estudante) => {
     setIsLoading(true);
@@ -541,12 +488,8 @@ const AdminDashboard = () => {
         throw new Error(`Erro HTTP: ${response.status}`);
       }
       
-      // Atualizar o status do estudante na lista local
-      setEstudantes(prev => prev.map(e => 
-        e.id === estudante.id 
-          ? { ...e, statusEstudante: e.statusEstudante === 'ATIVO' ? 'INATIVO' : 'ATIVO' } 
-          : e
-      ));
+      // Recarregar dados para sincronização
+      await refreshAllData();
       
       toast({
         title: "Status alterado",
@@ -885,12 +828,12 @@ const AdminDashboard = () => {
                   <Building className="h-5 w-5" />
                   <span>Lista de Escolas ({filteredEscolas.length})</span>
                   <Button 
-                    onClick={loadEscolas} 
+                    onClick={refreshAllData} 
                     disabled={isLoading}
                     variant="outline"
                     size="sm"
                   >
-                    {isLoading ? 'Carregando...' : 'Atualizar'}
+                    {isLoading ? 'Sincronizando...' : 'Sincronizar Dados'}
                   </Button>
                 </CardTitle>
               </CardHeader>
@@ -951,16 +894,6 @@ const AdminDashboard = () => {
                               <Edit className="h-4 w-4 mr-1" />
                               {escola.statusEscola === 'ATIVO' ? 'Inativar' : 'Ativar'}
                             </Button>
-                            
-                            <Button
-                              onClick={() => setEscolaToDelete(escola)}
-                              variant="outline"
-                              size="sm"
-                              className="text-red-600 hover:text-red-700"
-                            >
-                              <Trash2 className="h-4 w-4 mr-1" />
-                              Deletar
-                            </Button>
                           </div>
                         </div>
                       </div>
@@ -995,12 +928,12 @@ const AdminDashboard = () => {
                   <User className="h-5 w-5" />
                   <span>Lista de Estudantes ({filteredEstudantes.length})</span>
                   <Button 
-                    onClick={loadEstudantes} 
+                    onClick={refreshAllData} 
                     disabled={isLoading}
                     variant="outline"
                     size="sm"
                   >
-                    {isLoading ? 'Carregando...' : 'Atualizar'}
+                    {isLoading ? 'Sincronizando...' : 'Sincronizar Dados'}
                   </Button>
                 </CardTitle>
               </CardHeader>
@@ -1063,16 +996,6 @@ const AdminDashboard = () => {
                             >
                               <Edit className="h-4 w-4 mr-1" />
                               {estudante.statusEstudante === 'ATIVO' ? 'Inativar' : 'Ativar'}
-                            </Button>
-                            
-                            <Button
-                              onClick={() => setEstudanteToDelete(estudante)}
-                              variant="outline"
-                              size="sm"
-                              className="text-red-600 hover:text-red-700"
-                            >
-                              <Trash2 className="h-4 w-4 mr-1" />
-                              Deletar
                             </Button>
                           </div>
                         </div>
@@ -1152,49 +1075,6 @@ const AdminDashboard = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Dialog de confirmação de deleção de escola */}
-      <AlertDialog open={!!escolaToDelete} onOpenChange={() => setEscolaToDelete(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Confirmar exclusão de escola</AlertDialogTitle>
-            <AlertDialogDescription>
-              Tem certeza que deseja deletar a escola "{escolaToDelete?.nome}"? 
-              Esta ação não pode ser desfeita e afetará todos os dados relacionados.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => escolaToDelete && handleDeleteEscola(escolaToDelete)}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              Deletar
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      {/* Dialog de confirmação de deleção de estudante */}
-      <AlertDialog open={!!estudanteToDelete} onOpenChange={() => setEstudanteToDelete(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Confirmar exclusão de estudante</AlertDialogTitle>
-            <AlertDialogDescription>
-              Tem certeza que deseja deletar o estudante "{estudanteToDelete?.nome}"? 
-              Esta ação não pode ser desfeita e afetará todos os dados relacionados.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => estudanteToDelete && handleDeleteEstudante(estudanteToDelete)}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              Deletar
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 };
