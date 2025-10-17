@@ -111,7 +111,7 @@ const QuemSomos = () => {
               </div>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8 mb-16">
+            <div className="grid md:grid-cols-2 gap-8 mb-16">
               <Card className="text-center">
                 <CardContent className="p-6">
                   <Target className="h-12 w-12 text-blue-900 mx-auto mb-4" />
@@ -131,16 +131,7 @@ const QuemSomos = () => {
                   </p>
                 </CardContent>
               </Card>
-
-              <Card className="text-center">
-                <CardContent className="p-6">
-                  <Award className="h-12 w-12 text-blue-400 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold mb-3">Nossos Valores</h3>
-                  <p className="text-gray-600">
-                    Excelência, transparência, diversidade e comprometimento com o sucesso acadêmico e pessoal de cada estudante.
-                  </p>
-                </CardContent>
-              </Card>
+            
             </div>
 
             <div className="bg-gray-50 rounded-2xl p-8">
@@ -186,8 +177,6 @@ const QuemSomos = () => {
               <h4 className="font-semibold mb-4">Suporte</h4>
               <ul className="space-y-2 text-sm text-gray-400">
                 <li><a href="#" className="hover:text-white transition-colors">Central de Ajuda</a></li>
-                <li><Link to="/fale-consultor" className="hover:text-white transition-colors">Fale Conosco</Link></li>
-                <li><a href="#" className="hover:text-white transition-colors">FAQ</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">Documentos</a></li>
               </ul>
             </div>

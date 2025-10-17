@@ -46,8 +46,6 @@ const Programas = () => {
               <h4 className="font-semibold mb-4">Suporte</h4>
               <ul className="space-y-2 text-sm text-gray-400">
                 <li><a href="#" className="hover:text-blue-400 transition-colors">Central de Ajuda</a></li>
-                <li><Link to="/fale-consultor" className="hover:text-blue-400 transition-colors">Fale Conosco</Link></li>
-                <li><a href="#" className="hover:text-blue-400 transition-colors">FAQ</a></li>
                 <li><a href="#" className="hover:text-blue-400 transition-colors">Documentos</a></li>
               </ul>
             </div>

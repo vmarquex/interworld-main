@@ -31,7 +31,7 @@ const ComecarAgora = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           <Card className="hover:shadow-xl transition-all duration-300 border-0 bg-white">
             <CardHeader className="text-center pb-4">
               <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-900 to-blue-600 rounded-full flex items-center justify-center mb-4">
@@ -101,43 +101,6 @@ const ComecarAgora = () => {
               <Link to="/cadastro-escola" className="block">
                 <Button className="w-full bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 text-white">
                   Cadastrar Instituição
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-xl transition-all duration-300 border-0 bg-white">
-            <CardHeader className="text-center pb-4">
-              <div className="mx-auto w-16 h-16 bg-gradient-to-r from-green-600 to-blue-500 rounded-full flex items-center justify-center mb-4">
-                <Home className="h-8 w-8 text-white" />
-              </div>
-              <CardTitle className="text-2xl font-bold text-gray-900">
-                Sou Senhorio
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-gray-600 text-center">
-                Cadastre-se para oferecer hospedagem para estudantes de intercâmbio
-              </p>
-              
-              <div className="space-y-3">
-                <div className="flex items-center space-x-3">
-                  <Globe className="h-5 w-5 text-green-600" />
-                  <span className="text-sm text-gray-700">Hospedagem internacional</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <Users className="h-5 w-5 text-green-500" />
-                  <span className="text-sm text-gray-700">Estudantes qualificados</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <BookOpen className="h-5 w-5 text-green-400" />
-                  <span className="text-sm text-gray-700">Gestão simplificada</span>
-                </div>
-              </div>
-
-              <Link to="/cadastro-senhorio" className="block">
-                <Button className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white">
-                  Cadastrar como Senhorio
                 </Button>
               </Link>
             </CardContent>

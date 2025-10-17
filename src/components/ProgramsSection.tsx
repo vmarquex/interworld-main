@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import CandidateButton from '@/components/CandidateButton';
 import { Calendar, MapPin, Users, DollarSign, Clock, GraduationCap, Home, Briefcase } from 'lucide-react';
 
 const programs = [
@@ -246,13 +247,14 @@ const ProgramsSection = () => {
                 </div>
 
                 <div className="flex space-x-2 pt-2">
-                  <Link to="/candidatar-se" className="flex-1">
-                    <Button 
+                  <div className="flex-1">
+                    <CandidateButton 
                       className="w-full bg-gradient-to-r from-blue-900 to-blue-400 hover:from-blue-800 hover:to-blue-300 text-white text-sm h-9"
+                      size="sm"
                     >
                       Candidatar-se
-                    </Button>
-                  </Link>
+                    </CandidateButton>
+                  </div>
                   <Link to="/precos">
                     <Button variant="outline" className="text-sm h-9 px-3">
                       <GraduationCap className="h-4 w-4" />

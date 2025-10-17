@@ -1,8 +1,9 @@
 
 import React from 'react';
 import Header from '@/components/Header';
-import Hero from '@/components/Hero';
+import Hero from '@/components/Hero';  
 import CountryCarousel from '@/components/CountryCarousel';
+import CandidateButton from '@/components/CandidateButton';
 import { Link } from 'react-router-dom';
 
 const Index = () => {
@@ -22,11 +23,9 @@ const Index = () => {
             Junte-se a milhares de estudantes que já transformaram suas vidas através do intercâmbio
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/candidatar-se">
-              <button className="px-8 py-3 bg-gradient-to-r from-blue-900 to-blue-400 hover:from-blue-800 hover:to-blue-500 text-white font-semibold rounded-lg transition-all">
-                Candidatar-se Agora
-              </button>
-            </Link>
+            <CandidateButton className="px-8 py-3 bg-gradient-to-r from-blue-900 to-blue-400 hover:from-blue-800 hover:to-blue-500 text-white font-semibold rounded-lg transition-all">
+              Candidatar-se Agora
+            </CandidateButton>
             <Link to="/fale-consultor">
               <button className="px-8 py-3 border-2 border-blue-900 text-blue-900 hover:bg-blue-900 hover:text-white font-semibold rounded-lg transition-all">
                 Falar com Consultor
@@ -58,10 +57,6 @@ const Index = () => {
             <div>
               <h4 className="font-semibold mb-4">Suporte</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Central de Ajuda</a></li>
-                <li><Link to="/fale-consultor" className="hover:text-white transition-colors">Fale Conosco</Link></li>
-                <li><a href="#" className="hover:text-white transition-colors">FAQ</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Documentos</a></li>
               </ul>
             </div>
             <div>

@@ -5,6 +5,7 @@ import { ArrowLeft, MapPin, Clock, Users, DollarSign, Calendar, GraduationCap } 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import CandidateButton from '@/components/CandidateButton';
 
 const languagePrograms = [
   {
@@ -251,14 +252,13 @@ const CountryDetail = () => {
                             </div>
                           </div>
 
-                          <Link to="/candidatar-se">
-                            <Button 
-                              className="w-full bg-gradient-to-r from-blue-600 to-green-500 hover:from-blue-700 hover:to-green-600 text-white text-sm h-9"
-                            >
-                              <GraduationCap className="h-4 w-4 mr-2" />
-                              Candidatar-se
-                            </Button>
-                          </Link>
+                          <CandidateButton 
+                            className="w-full bg-gradient-to-r from-blue-600 to-green-500 hover:from-blue-700 hover:to-green-600 text-white text-sm h-9"
+                            size="sm"
+                            icon={<GraduationCap className="h-4 w-4 mr-2" />}
+                          >
+                            Candidatar-se
+                          </CandidateButton>
                         </CardContent>
                       </Card>
                     ))}
