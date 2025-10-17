@@ -526,7 +526,7 @@ const AdminDashboard = () => {
     try {
       const endpoint = estudante.statusEstudante === 'ATIVO' 
         ? `http://localhost:8081/api/estudantes/inativar/${estudante.id}`
-        : `http://localhost:8081/api/estudantes/update/${estudante.id}`;
+        : `http://localhost:8081/api/estudantes/ativar/${estudante.id}`;
       
       const response = await fetch(endpoint, {
         method: 'PUT',
