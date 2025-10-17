@@ -16,7 +16,7 @@ const StudentRegister = () => {
   const { toast } = useToast();
   
   const [formData, setFormData] = useState({
-    name: '',
+    nome: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -119,7 +119,7 @@ const StudentRegister = () => {
       
       // Primeiro, criar o usuário
       const userData = {
-        nome: formData.name,
+        nome: formData.nome,
         email: formData.email,
         senha: formData.password
       };
@@ -141,6 +141,7 @@ const StudentRegister = () => {
       // Preparar dados para enviar ao backend
       const estudanteData = {
         usuario: user,
+        nome: formData.nome,
         dataNascimento: formData.dataNascimento,
         cpf: formData.cpf,
         rg: formData.rg,
@@ -221,12 +222,12 @@ const StudentRegister = () => {
                 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Nome Completo</Label>
+                    <Label htmlFor="nome">Nome Completo</Label>
                     <Input
-                      id="name"
-                      name="name"
+                      id="nome"
+                      name="nome"
                       placeholder="Seu nome completo"
-                      value={formData.name}
+                      value={formData.nome}
                       onChange={handleInputChange}
                       maxLength={100} // Limite padrão para nomes
                       required
