@@ -392,7 +392,7 @@ const AdminDashboard = () => {
     setIsLoading(true);
     
     try {
-      const response = await fetch(`http://localhost:8081/api/usuarios/${user.id}/toggle-status`, {
+      const response = await fetch(`http://localhost:8081/api/usuarios/${user.id}/status`, {
         method: 'PUT',
         headers: getAuthHeaders(),
         body: JSON.stringify({ ativo: !user.ativo })
