@@ -23,28 +23,44 @@ const Precos = () => {
       flag: "🇨🇦"
     },
     {
-      destination: "Irlanda",
-      city: "Dublin",
+      destination: "Estados Unidos",
+      city: "Nova York",
+      pricePer4Weeks: 1850,
+      description: "Aprenda inglês no coração da Big Apple com oportunidades únicas.",
+      features: ["20 aulas/semana", "Acomodação em residência estudantil", "Atividades culturais", "Networking profissional"],
+      flag: "🇺🇸"
+    },
+    {
+      destination: "Reino Unido",
+      city: "Londres",
+      pricePer4Weeks: 1950,
+      description: "Estude inglês na capital britânica, berço da língua inglesa.",
+      features: ["25 aulas/semana", "Acomodação em casa de família", "Visitas culturais", "Certificação Cambridge"],
+      flag: "🇬🇧"
+    },
+    {
+      destination: "Austrália",
+      city: "Sydney",
+      pricePer4Weeks: 1650,
+      description: "Combine estudos com o lifestyle australiano em uma cidade icônica.",
+      features: ["20 aulas/semana", "Acomodação em apartamento", "Atividades ao ar livre", "Suporte para visto"],
+      flag: "🇦🇺"
+    },
+    {
+      destination: "Alemanha",
+      city: "Berlim",
+      pricePer4Weeks: 1400,
+      description: "Aprenda alemão na vibrante capital alemã, centro da Europa.",
+      features: ["24 aulas/semana", "Acomodação em residência", "Intercâmbio cultural", "Certificação Goethe"],
+      flag: "🇩🇪"
+    },
+    {
+      destination: "França",
+      city: "Paris",
       pricePer4Weeks: 1750,
-      description: "Aprenda inglês na Ilha Esmeralda, rica em cultura e história.",
-      features: ["20 aulas/semana", "Acomodação em residência estudantil", "Atividades sociais", "Suporte local"],
-      flag: "🇮🇪"
-    },
-    {
-      destination: "Malta",
-      city: "St. Julian's",
-      pricePer4Weeks: 1350,
-      description: "Estude inglês em uma ilha paradisíaca do Mediterrâneo.",
-      features: ["25 aulas/semana", "Acomodação em apartamento", "Passeios inclusos", "Ambiente internacional"],
-      flag: "🇲🇹"
-    },
-    {
-      destination: "África do Sul",
-      city: "Cidade do Cabo",
-      pricePer4Weeks: 1200,
-      description: "Combine o aprendizado do inglês com uma aventura inesquecível.",
-      features: ["20 aulas/semana", "Acomodação em residência", "Excursões e safáris", "Voluntariado opcional"],
-      flag: "🇿🇦"
+      description: "Estude francês na Cidade Luz, rica em arte, cultura e gastronomia.",
+      features: ["20 aulas/semana", "Acomodação em casa de família", "Visitas aos museus", "Certificação DELF"],
+      flag: "🇫🇷"
     }
   ];
 
@@ -153,7 +169,7 @@ const Precos = () => {
                 </Badge>
               </div>
               
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {languageCourses.map((course, index) => (
                   <Card key={index} className="border-2 hover:border-blue-300 transition-all duration-300 hover:shadow-lg flex flex-col">
                     <CardHeader className="pb-4">
