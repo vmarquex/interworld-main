@@ -6,6 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import CandidateButton from '@/components/CandidateButton';
+import estadosUnidosImg from '@/assets/estados-unidos.jpg';
+import canadaImg from '@/assets/canada.png';
+import reinoUnidoImg from '@/assets/reino-unido.jpg';
+import australiaImg from '@/assets/australia.jpg';
+import alemanhaImg from '@/assets/Alemanha.png';
+import francaImg from '@/assets/franca.jpg';
 
 const languagePrograms = [
   {
@@ -39,7 +45,7 @@ const countryData = {
     name: 'Estados Unidos',
     flag: '🇺🇸',
     description: 'O país da inovação e diversidade cultural, oferecendo oportunidades únicas em tecnologia, negócios e artes.',
-    image: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
+    image: estadosUnidosImg,
     states: [
       {
         name: 'Califórnia',
@@ -59,7 +65,7 @@ const countryData = {
     name: 'Canadá',
     flag: '🇨🇦',
     description: 'País conhecido pela qualidade de vida excepcional e sistema educacional de alto padrão.',
-    image: 'https://images.unsplash.com/photo-1466442929976-97f336a657be?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
+    image: canadaImg,
     states: [
       {
         name: 'Ontário',
@@ -79,7 +85,7 @@ const countryData = {
     name: 'Reino Unido',
     flag: '🇬🇧',
     description: 'Berço da tradição acadêmica com universidades centenárias e excelência em pesquisa.',
-    image: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
+    image: reinoUnidoImg,
     states: [
       {
         name: 'Inglaterra',
@@ -93,7 +99,7 @@ const countryData = {
     name: 'Austrália',
     flag: '🇦🇺',
     description: 'Combinação única de excelência acadêmica e estilo de vida descontraído.',
-    image: 'https://images.unsplash.com/photo-1466442929976-97f336a657be?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
+    image: australiaImg,
     states: [
       {
         name: 'New South Wales',
@@ -107,7 +113,7 @@ const countryData = {
     name: 'Alemanha',
     flag: '🇩🇪',
     description: 'Potência em engenharia e pesquisa, com muitas universidades gratuitas.',
-    image: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
+    image: alemanhaImg,
     states: [
       {
         name: 'Bayern',
@@ -121,7 +127,7 @@ const countryData = {
     name: 'França',
     flag: '🇫🇷',
     description: 'Centro mundial de arte, cultura e gastronomia com tradição acadêmica sólida.',
-    image: 'https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80',
+    image: francaImg,
     states: [
       {
         name: 'Île-de-France',

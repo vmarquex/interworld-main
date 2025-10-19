@@ -5,13 +5,19 @@ import { Button } from '@/components/ui/button';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { MapPin, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import estadosUnidosImg from '@/assets/estados-unidos.jpg';
+import canadaImg from '@/assets/canada.png';
+import reinoUnidoImg from '@/assets/reino-unido.jpg';
+import australiaImg from '@/assets/australia.jpg';
+import alemanhaImg from '@/assets/Alemanha.png';
+import francaImg from '@/assets/franca.jpg';
 
 const countries = [
   {
     name: 'Estados Unidos',
     flag: '🇺🇸',
     students: '2.5k+',
-    image: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=600&fit=crop',
+    image: estadosUnidosImg,
     description: 'Tecnologia e inovação de ponta',
     route: '/pais/estados-unidos'
   },
@@ -19,7 +25,7 @@ const countries = [
     name: 'Canadá',
     flag: '🇨🇦',
     students: '1.8k+',
-    image: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&h=600&fit=crop',
+    image: canadaImg,
     description: 'Educação de qualidade mundial',
     route: '/pais/canada'
   },
@@ -27,7 +33,7 @@ const countries = [
     name: 'Reino Unido',
     flag: '🇬🇧',
     students: '2.1k+',
-    image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&h=600&fit=crop',
+    image: reinoUnidoImg,
     description: 'Tradição acadêmica secular',
     route: '/pais/reino-unido'
   },
@@ -35,7 +41,7 @@ const countries = [
     name: 'Austrália',
     flag: '🇦🇺',
     students: '1.2k+',
-    image: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=800&h=600&fit=crop',
+    image: australiaImg,
     description: 'Lifestyle único e natureza exuberante',
     route: '/pais/australia'
   },
@@ -43,7 +49,7 @@ const countries = [
     name: 'Alemanha',
     flag: '🇩🇪',
     students: '1.5k+',
-    image: 'https://images.unsplash.com/photo-1472396961693-142e6e269027?w=800&h=600&fit=crop',
+    image: alemanhaImg,
     description: 'Engenharia e pesquisa avançada',
     route: '/pais/alemanha'
   },
@@ -51,7 +57,7 @@ const countries = [
     name: 'França',
     flag: '🇫🇷',
     students: '1.3k+',
-    image: 'https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=800&h=600&fit=crop',
+    image: francaImg,
     description: 'Arte, cultura e gastronomia',
     route: '/pais/franca'
   }

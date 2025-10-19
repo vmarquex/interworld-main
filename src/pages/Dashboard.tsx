@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { User, Building, Home, Settings, LogOut, Menu, X } from 'lucide-react';
+import { User, Building, Home, Settings, LogOut, Menu, X, PlusCircle, ExternalLink } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import StudentDashboard from '@/components/StudentDashboard';
 import SchoolDashboard from '@/components/SchoolDashboard';
@@ -232,22 +232,53 @@ const Dashboard = () => {
 
       <div className="container mx-auto px-4 py-8">
         {!userData.profileComplete && userData.userType === 'school' ? (
-          <div className="w-full max-w-2xl mx-auto">
-            <Card>
-              <CardHeader>
-                <CardTitle>Adicione informações do seu intercâmbio</CardTitle>
-                <p className="text-gray-600">
-                  Para adicionar seu intercâmbio, por favor, preencha as informações abaixo.
-                </p>
-              </CardHeader>
-              <CardContent>
-                <EditProfile
-                  userData={userData}
-                  onBack={handleLogout} // O botão "Cancelar" fará logout
-                  onSave={handleProfileSave}
-                />
-              </CardContent>
-            </Card>
+          <div className="w-full max-w-4xl mx-auto">
+            <div className="grid lg:grid-cols-3 gap-6">
+              {/* Formulário de Perfil */}
+              <div className="lg:col-span-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Adicione informações do seu intercâmbio</CardTitle>
+                    <p className="text-gray-600">
+                      Para adicionar seu intercâmbio, por favor, preencha as informações abaixo.
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    <EditProfile
+                      userData={userData}
+                      onBack={handleLogout} // O botão "Cancelar" fará logout
+                      onSave={handleProfileSave}
+                    />
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Acesso Rápido aos Programas */}
+              <div className="lg:col-span-1">
+                <Card className="bg-gradient-to-br from-teal-50 to-cyan-50 border-teal-200">
+                  <CardHeader>
+                    <CardTitle className="text-lg text-teal-800">Acesso Rápido</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <p className="text-sm text-gray-600">
+                      Você pode cadastrar programas mesmo com o perfil incompleto.
+                    </p>
+                    <Link to="/cadastrar-programa">
+                      <Button className="w-full bg-gradient-to-r from-teal-600 to-cyan-500 hover:from-teal-700 hover:to-cyan-600">
+                        <PlusCircle className="h-4 w-4 mr-2" />
+                        Cadastrar Programa
+                      </Button>
+                    </Link>
+                    <Link to="/programas">
+                      <Button variant="outline" className="w-full border-teal-600 text-teal-600 hover:bg-teal-50">
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                        Ver Programas
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
           </div>
         ) : (
           <div className="grid lg:grid-cols-4 gap-6">
@@ -270,44 +301,6 @@ const Dashboard = () => {
               {userData.userType === 'student' && <StudentDashboard userData={userData} />}
               {userData.userType === 'school' && <SchoolDashboard />}
 
-              {/* Quick Actions */}
-              <div className="grid md:grid-cols-2 gap-4">
-                <Card className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-6">
-                    <h3 className="text-lg font-semibold mb-2">
-                      {isSchool ? t('managePrograms') : t('explorePrograms')}
-                    </h3>
-                    <p className="text-sm text-gray-600 mb-4">
-                      {isSchool 
-                        ? t('createManagePrograms')
-                        : t('exploreProgramsDescription')
-                      }
-                    </p>
-                    <Link to="/precos">
-                      <Button className={`bg-gradient-to-r ${themeColors.button} text-white`}>
-                        {isSchool ? t('manage') : t('explore')}
-                      </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
-
-                <Card className="hover:shadow-md transition-shadow">
-                  <CardContent className="p-6">
-                    <h3 className="text-lg font-semibold mb-2">
-                      {isSchool ? t('candidates') : t('myApplications')}
-                    </h3>
-                    <p className="text-sm text-gray-600 mb-4">
-                      {isSchool 
-                        ? t('viewInterestedStudents')
-                        : t('trackApplicationStatus')
-                      }
-                    </p>
-                    <Button variant="outline">
-                      {isSchool ? t('viewCandidates') : t('viewStatus')}
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
 
             </div>
 

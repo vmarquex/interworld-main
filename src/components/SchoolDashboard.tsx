@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { PlusCircle, Trash2, Home, Briefcase, MapPin, Clock, DollarSign, Info } from 'lucide-react';
+import { PlusCircle, Trash2, Home, Briefcase, MapPin, Clock, DollarSign, Info, ExternalLink } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -126,13 +127,24 @@ const SchoolDashboard = () => {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">Gerenciar Programas</h3>
-              <Button 
-                onClick={() => setShowForm(!showForm)}
-                className="bg-gradient-to-r from-teal-600 to-cyan-500 hover:from-teal-700 hover:to-cyan-600"
-              >
-                <PlusCircle className="h-4 w-4 mr-2" />
-                {showForm ? 'Cancelar' : 'Novo Programa'}
-              </Button>
+              <div className="flex gap-2">
+                <Link to="/cadastrar-programa">
+                  <Button 
+                    variant="outline"
+                    className="border-teal-600 text-teal-600 hover:bg-teal-50"
+                  >
+                    <ExternalLink className="h-4 w-4 mr-2" />
+                    Cadastro Completo
+                  </Button>
+                </Link>
+                <Button 
+                  onClick={() => setShowForm(!showForm)}
+                  className="bg-gradient-to-r from-teal-600 to-cyan-500 hover:from-teal-700 hover:to-cyan-600"
+                >
+                  <PlusCircle className="h-4 w-4 mr-2" />
+                  {showForm ? 'Cancelar' : 'Novo Programa'}
+                </Button>
+              </div>
             </div>
 
             {showForm && (
