@@ -6,6 +6,12 @@ import CountryCarousel from '@/components/CountryCarousel';
 import CandidateButton from '@/components/CandidateButton';
 import { Link } from 'react-router-dom';
 
+// Função para verificar se o usuário está logado
+const isUserLoggedIn = () => {
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  return isLoggedIn === 'true';
+};
+
 const Index = () => {
   return (
     <div className="min-h-screen bg-white">
@@ -13,27 +19,29 @@ const Index = () => {
       <Hero />
       <CountryCarousel />
       
-      {/* Seção de chamada para ação */}
-      <section className="py-16 bg-gradient-to-br from-blue-50 via-white to-blue-100">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-            Pronto para começar sua jornada?
-          </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
-            Junte-se a milhares de estudantes que já transformaram suas vidas através do intercâmbio
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <CandidateButton className="px-8 py-3 bg-gradient-to-r from-blue-900 to-blue-400 hover:from-blue-800 hover:to-blue-500 text-white font-semibold rounded-lg transition-all">
-              Candidatar-se Agora
-            </CandidateButton>
-            <Link to="/fale-consultor">
-              <button className="px-8 py-3 border-2 border-blue-900 text-blue-900 hover:bg-blue-900 hover:text-white font-semibold rounded-lg transition-all">
-                Falar com Consultor
-              </button>
-            </Link>
+      {/* Seção de chamada para ação - só aparece se não estiver logado */}
+      {!isUserLoggedIn() && (
+        <section className="py-16 bg-gradient-to-br from-blue-50 via-white to-blue-100">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+              Pronto para começar sua jornada?
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+              Junte-se a milhares de estudantes que já transformaram suas vidas através do intercâmbio
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <CandidateButton className="px-8 py-3 bg-gradient-to-r from-blue-900 to-blue-400 hover:from-blue-800 hover:to-blue-500 text-white font-semibold rounded-lg transition-all">
+                Candidatar-se Agora
+              </CandidateButton>
+              <Link to="/fale-consultor">
+                <button className="px-8 py-3 border-2 border-blue-900 text-blue-900 hover:bg-blue-900 hover:text-white font-semibold rounded-lg transition-all">
+                  Falar com Consultor
+                </button>
+              </Link>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
       
       {/* Footer */}
       <footer className="bg-gray-900 text-white py-12">

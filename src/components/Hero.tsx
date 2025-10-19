@@ -5,6 +5,12 @@ import { ArrowRight, Globe2, Users, BookOpen } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Link } from 'react-router-dom';
 
+// Função para verificar se o usuário está logado
+const isUserLoggedIn = () => {
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  return isLoggedIn === 'true';
+};
+
 const Hero = () => {
   const isMobile = useIsMobile();
 
@@ -25,27 +31,29 @@ const Hero = () => {
               Acompanhe sua jornada acadêmica internacional em tempo real.
             </p>
             
-            {!isMobile ? (
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link to="/comecar-agora">
-                  <Button size="lg" className="bg-gradient-to-r from-blue-900 to-blue-400 hover:from-blue-800 hover:to-blue-500 text-white px-8 py-3">
-                    Começar Agora
+            {!isUserLoggedIn() && (
+              !isMobile ? (
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Link to="/comecar-agora">
+                    <Button size="lg" className="bg-gradient-to-r from-blue-900 to-blue-400 hover:from-blue-800 hover:to-blue-500 text-white px-8 py-3">
+                      Começar Agora
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </Link>
+                  <Link to="/sou-escola">
+                    <Button variant="outline" size="lg" className="px-8 py-3">
+                      Sou uma Escola
+                    </Button>
+                  </Link>
+                </div>
+              ) : (
+                <Link to="/login">
+                  <Button size="lg" className="w-full bg-gradient-to-r from-blue-900 to-blue-400 hover:from-blue-800 hover:to-blue-500 text-white">
+                    Acessar Minha Área
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </Link>
-                <Link to="/sou-escola">
-                  <Button variant="outline" size="lg" className="px-8 py-3">
-                    Sou uma Escola
-                  </Button>
-                </Link>
-              </div>
-            ) : (
-              <Link to="/login">
-                <Button size="lg" className="w-full bg-gradient-to-r from-blue-900 to-blue-400 hover:from-blue-800 hover:to-blue-500 text-white">
-                  Acessar Minha Área
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
+              )
             )}
           </div>
 

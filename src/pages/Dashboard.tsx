@@ -263,18 +263,20 @@ const Dashboard = () => {
                     <p className="text-sm text-gray-600">
                       Você pode cadastrar programas mesmo com o perfil incompleto.
                     </p>
-                    <Link to="/cadastrar-programa">
-                      <Button className="w-full bg-gradient-to-r from-teal-600 to-cyan-500 hover:from-teal-700 hover:to-cyan-600">
-                        <PlusCircle className="h-4 w-4 mr-2" />
-                        Cadastrar Programa
-                      </Button>
-                    </Link>
-                    <Link to="/programas">
-                      <Button variant="outline" className="w-full border-teal-600 text-teal-600 hover:bg-teal-50">
-                        <ExternalLink className="h-4 w-4 mr-2" />
-                        Ver Programas
-                      </Button>
-                    </Link>
+                    <div className="space-y-3">
+                      <Link to="/cadastrar-programa">
+                        <Button className="w-full bg-gradient-to-r from-teal-600 to-cyan-500 hover:from-teal-700 hover:to-cyan-600">
+                          <PlusCircle className="h-4 w-4 mr-2" />
+                          Cadastrar Programa
+                        </Button>
+                      </Link>
+                      <Link to="/programas">
+                        <Button variant="outline" className="w-full border-teal-600 text-teal-600 hover:bg-teal-50">
+                          <ExternalLink className="h-4 w-4 mr-2" />
+                          Ver Programas
+                        </Button>
+                      </Link>
+                    </div>
                   </CardContent>
                 </Card>
               </div>
