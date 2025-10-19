@@ -54,12 +54,13 @@ const Index = () => {
                 <li><Link to="/quem-somos" className="hover:text-white transition-colors">Quem Somos</Link></li>
               </ul>
             </div>
-            <div>
-              <h4 className="font-semibold mb-4">Suporte</h4>
+            <div className="w-full md:w-1/4 mb-6 md:mb-0">
+            <h4 className="font-semibold mb-4">Central de Ajuda</h4>
               <ul className="space-y-2 text-sm text-gray-400">
+                <li><a href="/fale-consultor" className="hover:text-blue-400 transition-colors">Suporte</a></li>
               </ul>
             </div>
-            <div>
+            <div className="w-full md:w-1/4">
               <h4 className="font-semibold mb-4">Contato</h4>
               <ul className="space-y-2 text-sm text-gray-400">
                 <li>contato@interworld.com</li>

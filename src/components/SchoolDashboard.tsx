@@ -201,15 +201,6 @@ const SchoolDashboard = () => {
                             onChange={(e) => handleInputChange('price', e.target.value)}
                           />
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="course-deadline">Prazo de Inscrição</Label>
-                          <Input
-                            id="course-deadline"
-                            type="date"
-                            value={formData.deadline}
-                            onChange={(e) => handleInputChange('deadline', e.target.value)}
-                          />
-                        </div>
                       </div>
 
                       <div className="space-y-2">
@@ -480,12 +471,6 @@ const SchoolDashboard = () => {
                               <div>
                                 <span className="font-medium text-gray-700">Requisitos:</span>
                                 <p className="text-gray-600">{course.requirements}</p>
-                              </div>
-                            )}
-                            {course.deadline && (
-                              <div>
-                                <span className="font-medium text-gray-700">Prazo:</span>
-                                <p className="text-gray-600">{new Date(course.deadline).toLocaleDateString('pt-BR')}</p>
                               </div>
                             )}
                           </div>

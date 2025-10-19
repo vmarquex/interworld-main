@@ -43,11 +43,10 @@ const Paises = () => {
                 <li><Link to="/quem-somos" className="hover:text-blue-400 transition-colors">Quem Somos</Link></li>
               </ul>
             </div>
-            <div>
-              <h4 className="font-semibold mb-4">Suporte</h4>
+            <div className="w-full md:w-1/4 mb-6 md:mb-0">
+            <h4 className="font-semibold mb-4">Central de Ajuda</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-blue-400 transition-colors">Central de Ajuda</a></li>
-                <li><a href="#" className="hover:text-blue-400 transition-colors">Documentos</a></li>
+                <li><a href="/fale-consultor" className="hover:text-blue-400 transition-colors">Suporte</a></li>
               </ul>
             </div>
             <div>

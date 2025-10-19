@@ -227,11 +227,6 @@ const ProgramsSection = () => {
                     <p className="text-xs text-gray-500">USD</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500 mb-1">Prazo</p>
-                    <p className="font-semibold text-red-600 flex items-center">
-                      <Calendar className="h-4 w-4 mr-1" />
-                      {new Date(program.deadline).toLocaleDateString('pt-BR')}
-                    </p>
                   </div>
                 </div>
 

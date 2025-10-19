@@ -55,7 +55,7 @@ const LoginForm = () => {
         description: "Bem-vindo ao modo de teste.",
       });
 
-      navigate('/dashboard');
+      navigate('/');
       return;
     }
 
@@ -114,7 +114,7 @@ const LoginForm = () => {
           });
 
           // Redirecionar para dashboard
-          navigate('/dashboard');
+          navigate('/');
         } else {
           toast({
             title: "Tipo de usuário incorreto",

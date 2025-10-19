@@ -35,7 +35,7 @@ const EditSchoolProfile = ({ onBack, onSave, userData }: EditSchoolProfileProps)
     <form onSubmit={handleSubmit}>
       <Card>
         <CardHeader>
-          <CardTitle>Editar Perfil da Escola</CardTitle>
+          <CardTitle>Informações da Escola:</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center space-x-4">
@@ -96,7 +96,7 @@ const EditSchoolProfile = ({ onBack, onSave, userData }: EditSchoolProfileProps)
           <Button type="button" variant="ghost" onClick={onBack}>
             Cancelar
           </Button>
-          <Button type="submit">Salvar Alterações</Button>
+          <Button type="submit">Adicionar Intercâmbio</Button>
         </CardFooter>
       </Card>
     </form>

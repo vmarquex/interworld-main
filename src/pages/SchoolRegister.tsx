@@ -165,7 +165,7 @@ const SchoolRegister = () => {
         });
 
         setTimeout(() => {
-          navigate('/login');
+          navigate('/');
         }, 2000);
       } else {
         const error = await escolaResponse.json().catch(() => null);

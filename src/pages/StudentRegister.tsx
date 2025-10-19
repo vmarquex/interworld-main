@@ -170,7 +170,7 @@ const StudentRegister = () => {
         
         // Redirecionar para login após cadastro bem-sucedido
         setTimeout(() => {
-          navigate('/login');
+          navigate('/');
         }, 2000);
       } else {
         throw new Error('Erro no servidor');

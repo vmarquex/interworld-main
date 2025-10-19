@@ -205,30 +205,13 @@ const Precos = () => {
                           ))}
                         </ul>
                       </div>
-                      
-                      <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white mt-auto">
-                        Ver detalhes
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
                     </CardContent>
                   </Card>
                 ))}
               </div>
             </div>
 
-            {/* Cursos de Carreira REMOVED */}
-
-            {/* Botão de Solicitar Orçamento */}
-            <div className="text-center pt-6">
-              <Button 
-                onClick={handleRequestQuote}
-                className="bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white px-8 py-3 text-lg font-semibold"
-              >
-                Solicitar orçamento
-              </Button>
-            </div>
-
-            {/* Informações Adicionais */}
+         {/* Informações Adicionais */}
             <div className="mt-8 pt-6 border-t border-gray-200">
               <div className="text-center">
                 <p className="text-gray-600 flex items-center justify-center gap-2">

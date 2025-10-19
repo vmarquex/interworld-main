@@ -235,9 +235,9 @@ const Dashboard = () => {
           <div className="w-full max-w-2xl mx-auto">
             <Card>
               <CardHeader>
-                <CardTitle>Complete seu Perfil</CardTitle>
+                <CardTitle>Adicione informações do seu intercâmbio</CardTitle>
                 <p className="text-gray-600">
-                  Para continuar, por favor, preencha as informações abaixo.
+                  Para adicionar seu intercâmbio, por favor, preencha as informações abaixo.
                 </p>
               </CardHeader>
               <CardContent>
